@@ -500,6 +500,11 @@ async function loadDashboard() {
 completed = loadCompleted();
 loadDashboard();
 
+// Auto-refresh when switching back to this tab
+document.addEventListener("visibilitychange", () => {
+  if (!document.hidden && getApiKey()) loadDashboard();
+});
+
 // Register service worker
 if ("serviceWorker" in navigator) {
   navigator.serviceWorker.register("sw.js").catch(() => {});
