@@ -165,8 +165,11 @@
 <script>
 // ─── CONFIG ─────────────────────────────────────────────────────────
 const API_BASE = "https://dashboardapi-production.up.railway.app";
-const API_KEY = "hlbdashboard";
 const STORAGE_KEY = "les-dashboard-completed-v3";
+const KEY_STORAGE = "les-dashboard-api-key";
+
+function getApiKey() { return localStorage.getItem(KEY_STORAGE); }
+function setApiKey(k) { localStorage.setItem(KEY_STORAGE, k); }
 
 // ─── SCHEDULE ───────────────────────────────────────────────────────
 const SCHEDULE = {
@@ -255,9 +258,31 @@ function saveCompleted() {
 }
 
 async function fetchDashboard() {
-  const res = await fetch(`${API_BASE}/dashboard`, { headers: { "X-API-Key": API_KEY } });
+  const key = getApiKey();
+  if (!key) return promptForKey();
+  const res = await fetch(`${API_BASE}/dashboard`, { headers: { "X-API-Key": key } });
+  if (res.status === 401) { localStorage.removeItem(KEY_STORAGE); return promptForKey(); }
   if (!res.ok) throw new Error(`${res.status} ${res.statusText}`);
   return res.json();
+}
+
+function promptForKey() {
+  const app = document.getElementById("app");
+  app.innerHTML = `
+    <div style="max-width:400px;margin:100px auto;text-align:center;">
+      <h1 style="color:#C9A961;font-size:24px;margin-bottom:16px;">Dashboard Setup</h1>
+      <p class="ui" style="color:#A0AEC0;font-size:14px;margin-bottom:20px;">Enter your API key to connect.</p>
+      <input id="key-input" type="password" placeholder="API key" style="width:100%;padding:10px 14px;border-radius:8px;border:1px solid rgba(201,169,97,0.4);background:rgba(255,255,255,0.08);color:#F5F1E8;font-size:14px;font-family:system-ui,sans-serif;outline:none;margin-bottom:12px;">
+      <br><button id="key-submit" style="padding:10px 24px;border-radius:8px;border:none;background:#C9A961;color:#1B2845;font-size:14px;font-weight:600;cursor:pointer;font-family:system-ui,sans-serif;">Connect</button>
+    </div>`;
+  document.getElementById("key-submit").addEventListener("click", () => {
+    const val = document.getElementById("key-input").value.trim();
+    if (val) { setApiKey(val); loadDashboard(); }
+  });
+  document.getElementById("key-input").addEventListener("keydown", (e) => {
+    if (e.key === "Enter") { const val = e.target.value.trim(); if (val) { setApiKey(val); loadDashboard(); } }
+  });
+  return null;
 }
 
 // ─── RENDER ─────────────────────────────────────────────────────────
@@ -460,7 +485,9 @@ function render() {
 // ─── INIT ───────────────────────────────────────────────────────────
 async function loadDashboard() {
   try {
-    groups = await fetchDashboard();
+    const data = await fetchDashboard();
+    if (!data) return; // waiting for key input
+    groups = data;
     lastFetched = new Date();
     error = null;
   } catch (e) {
