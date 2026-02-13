@@ -57,6 +57,11 @@
     .calendar-header .cal-chevron { color: var(--gold); font-size: 16px; transition: transform 0.25s; margin-left: 8px; }
     .calendar-header .cal-chevron.closed { transform: rotate(-90deg); }
     .calendar-header.collapsed { border-bottom: none; }
+    .cal-nav { display: flex; align-items: center; gap: 6px; }
+    .cal-nav-btn { background: none; border: 1px solid rgba(201,169,97,0.3); border-radius: 4px; color: var(--gold); cursor: pointer; font-size: 14px; width: 26px; height: 26px; display: flex; align-items: center; justify-content: center; transition: all 0.2s; }
+    .cal-nav-btn:hover { background: rgba(201,169,97,0.15); }
+    .cal-nav-today { background: none; border: 1px solid rgba(201,169,97,0.2); border-radius: 4px; color: var(--text-muted); cursor: pointer; font-size: 10px; padding: 2px 8px; text-transform: uppercase; letter-spacing: 0.05em; }
+    .cal-nav-today:hover { color: var(--gold); border-color: rgba(201,169,97,0.4); }
     
     .day-tabs { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-subtle); }
     .day-tab { padding: 10px 4px 8px; border: none; border-bottom: 2px solid transparent; background: transparent; cursor: pointer; text-align: center; transition: all 0.2s; }
@@ -239,6 +244,7 @@ let error = null;
 let claudeNotesOpen = false;
 let editingNoticeId = null;
 let calendarOpen = true;
+let weekOffset = 0;
 
 // â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function daysUntilDeadline(task) {
@@ -304,7 +310,7 @@ function render() {
   const app = document.getElementById("app");
   const now = new Date();
   const todayName = DAY_ORDER[now.getDay()];
-  const sunday = new Date(now); sunday.setDate(now.getDate() - now.getDay());
+  const sunday = new Date(now); sunday.setDate(now.getDate() - now.getDay() + (weekOffset * 7));
   const weekDates = DAY_ORDER.map((_, i) => { const d = new Date(sunday); d.setDate(sunday.getDate() + i); return d; });
   const todayStr = now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
@@ -381,7 +387,12 @@ function render() {
     <div class="calendar ui">
       <div class="calendar-header${calendarOpen ? '' : ' collapsed'}" id="calendar-toggle">
         <h2>Weekly Rhythm <span class="cal-chevron${calendarOpen ? '' : ' closed'}">&#x25BE;</span></h2>
-        <span>Week of ${weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+        <div class="cal-nav">
+          <button class="cal-nav-btn" id="cal-prev">&#x25C0;</button>
+          ${weekOffset !== 0 ? '<button class="cal-nav-today" id="cal-today">Today</button>' : ''}
+          <button class="cal-nav-btn" id="cal-next">&#x25B6;</button>
+          <span style="font-size:12px;color:var(--text-muted);margin-left:4px">Week of ${weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
+        </div>
       </div>
       ${calendarOpen ? `<div class="day-tabs">
         ${DAY_ORDER.map((day, i) => {
@@ -612,7 +623,19 @@ function render() {
   });
 
   const calToggle = document.getElementById("calendar-toggle");
-  if (calToggle) calToggle.addEventListener("click", () => { calendarOpen = !calendarOpen; render(); });
+  if (calToggle) calToggle.addEventListener("click", (e) => {
+    if (e.target.closest('.cal-nav-btn') || e.target.closest('.cal-nav-today')) return;
+    calendarOpen = !calendarOpen; render();
+  });
+
+  const calPrev = document.getElementById("cal-prev");
+  if (calPrev) calPrev.addEventListener("click", (e) => { e.stopPropagation(); weekOffset--; render(); });
+
+  const calNext = document.getElementById("cal-next");
+  if (calNext) calNext.addEventListener("click", (e) => { e.stopPropagation(); weekOffset++; render(); });
+
+  const calToday = document.getElementById("cal-today");
+  if (calToday) calToday.addEventListener("click", (e) => { e.stopPropagation(); weekOffset = 0; selectedDay = DAY_ORDER[new Date().getDay()]; render(); });
 
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => { activeFilter = btn.dataset.filter; render(); });
