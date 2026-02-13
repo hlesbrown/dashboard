@@ -125,3 +125,51 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 ---
 
 *Last updated: February 13, 2026 by Claude-Dashboard*
+
+---
+
+## 10. Calendar Loading Protocol
+
+When Les posts a calendar screenshot each morning, Claude-Dashboard loads the events into the API.
+
+### Color Guide (from Les's calendar app)
+- **Blue** = Les's calendar items → `source: "les"`
+- **Orange** = Craig's calendar items → `source: "craig"`
+- **Green** = Shared items (usually with Dennis) → `source: "shared"`
+
+### Daily Workflow
+1. Les posts calendar screenshot
+2. Read each day carefully, noting the color of each item
+3. For dates already in the API, clear them first: `DELETE /calendar?date=YYYY-MM-DD`
+4. Bulk load new events: `POST /calendar` with an array
+5. Verify with `GET /calendar?date=YYYY-MM-DD`
+
+### Field Mapping
+- `date`: "YYYY-MM-DD" format
+- `time`: Exact time if shown (e.g. "10:00 AM"), "AM"/"PM" if vague, empty string for all-day
+- `event`: Event name as shown on calendar
+- `category`: Usually "Personal" or "Ministry" (for liturgy/chapel items)
+- `duration`: Minutes if known, null otherwise
+- `location`: Include if shown on calendar
+- `detail`: Extra info (e.g. "GB Chapel" for daily liturgy)
+- `source`: "les" (blue), "craig" (orange), "shared" (green)
+- `automated`: true only for auto-sent items like Thursday liturgy email
+
+### Common Patterns
+- Daily Liturgy (5:00 AM or 6:00 AM Sunday) — always Les, category Ministry
+- Walk (7:30 AM) — always Les
+- Tennis with Stephan — usually Craig's calendar (orange)
+- Light Watering — always Craig
+- Water plants — always Craig
+- Vincente gardening — always Craig
+- AA Meetings — always Les
+- Birthdays — usually Craig
+- Sponsee meetings (Dennis) — shared (green)
+
+### Important
+- LOOK CAREFULLY at colors. When in doubt, ask Les.
+- Events with no time go to top of that day (all-day events)
+- The webapp sorts by time and hides past events on today's view
+- The `/dashboard` endpoint returns ~2 weeks of calendar data automatically
+
+*Last updated: February 13, 2026*
