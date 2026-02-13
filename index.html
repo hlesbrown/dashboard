@@ -328,9 +328,40 @@ function render() {
     calByDate[evt.date].push(evt);
   });
 
-  // Get events for selected day
+  // Helper: parse time string to minutes since midnight for sorting
+  function timeToMinutes(t) {
+    if (!t) return -1; // no time = "all day" events, show at top
+    const m = t.match(/(\d+):(\d+)\s*(AM|PM)/i);
+    if (m) {
+      let h = parseInt(m[1]);
+      const min = parseInt(m[2]);
+      const ap = m[3].toUpperCase();
+      if (ap === "PM" && h !== 12) h += 12;
+      if (ap === "AM" && h === 12) h = 0;
+      return h * 60 + min;
+    }
+    if (/^AM$/i.test(t.trim())) return 1; // "AM" = early
+    if (/^PM$/i.test(t.trim())) return 720; // "PM" = after noon
+    return -1;
+  }
+
+  // Sort each day's events by time
+  Object.values(calByDate).forEach(dayEvents => {
+    dayEvents.sort((a, b) => timeToMinutes(a.time) - timeToMinutes(b.time));
+  });
+
+  // Get events for selected day, filter out past events if viewing today
   const selectedDateStr = weekDates[DAY_ORDER.indexOf(selectedDay)].toISOString().slice(0, 10);
-  const selectedEvents = calByDate[selectedDateStr] || [];
+  let selectedEvents = calByDate[selectedDateStr] || [];
+  if (selectedDay === todayName) {
+    const nowMinutes = now.getHours() * 60 + now.getMinutes();
+    selectedEvents = selectedEvents.filter(evt => {
+      const evtMin = timeToMinutes(evt.time);
+      if (evtMin < 0) return true; // all-day events always show
+      const dur = evt.duration || 60; // default assume 1hr
+      return (evtMin + dur) > nowMinutes;
+    });
+  }
 
   app.innerHTML = `
     <!-- Header -->
