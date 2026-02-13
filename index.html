@@ -66,6 +66,11 @@
       border-radius: 12px;
       overflow: hidden;
     }
+    .due-today-card.all-done {
+      background: rgba(5,150,105,0.06);
+      border-color: rgba(5,150,105,0.3);
+    }
+    .due-today-card.all-done .due-today-header h2 { color: #059669; }
     .due-today-header {
       padding: 14px 18px 12px;
       border-bottom: 1px solid rgba(245,158,11,0.15);
@@ -413,7 +418,7 @@ function render() {
 
   const selectedEvents = SCHEDULE[selectedDay] || [];
 
-  // Build the Due Today HTML
+  // Build the Due Today HTML — always open, always visible
   let dueTodayHTML = "";
   if (todayGroup && todayGroup.tasks && todayGroup.tasks.length > 0) {
     // Use the most recent task (latest updated_at) as today's list
@@ -423,21 +428,22 @@ function render() {
     const taskDone = completed[todayTask.id] || {};
     const actions = todayTask.next_actions || [];
     const doneCount = Object.values(taskDone).filter(Boolean).length;
+    const allDone = actions.length > 0 && doneCount === actions.length;
 
     dueTodayHTML = `
       <div class="due-today">
-        <div class="due-today-card">
+        <div class="due-today-card${allDone ? " all-done" : ""}">
           <div class="due-today-header ui">
             <h2>📋 Due Today — ${todayTask.name}</h2>
-            <span class="subtitle">${doneCount > 0 ? doneCount + "/" + actions.length + " done" : actions.length + " items"}</span>
+            <span class="subtitle">${allDone ? "✔ All done!" : doneCount > 0 ? doneCount + "/" + actions.length + " done" : actions.length + " items"}</span>
           </div>
           ${todayTask.status ? `<p class="due-today-status ui">${todayTask.status}</p>` : ""}
           <div class="due-today-items ui">
             ${actions.map((action, i) => {
-              const isDone = taskDone[i] === true;
+              const isDone = taskDone[i] === true || action.startsWith("✅");
               return `<div class="today-item${isDone ? " done" : ""}" data-today-action="${todayTask.id}-${i}">
                 <span class="today-check${isDone ? " checked" : ""}">${isDone ? "✔" : ""}</span>
-                <span class="today-item-text">${action}</span>
+                <span class="today-item-text">${action.replace(/^✅\s*/, "")}</span>
               </div>`;
             }).join("")}
           </div>
