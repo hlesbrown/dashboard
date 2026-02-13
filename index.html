@@ -470,7 +470,7 @@ function render() {
             const taskDone = completed[task.id] || {};
             const doneCount = Object.values(taskDone).filter(Boolean).length;
             const dl = daysUntilDeadline(task);
-            const isOpen = expandedId === task.id;
+            const isOpen = expandedId === task.id || group.id === "today";
             const borderClass = eff === "urgent" ? " urgent-border" : eff === "upcoming" ? " upcoming-border" : "";
 
             return `<div class="task-card${isOpen ? " expanded" : ""}${borderClass}">
