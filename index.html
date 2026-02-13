@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Les Brown &mdash; Project Dashboard</title>
+  <title>Les Brown — Project Dashboard</title>
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#1B2845">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +17,7 @@
       --navy-deep: #1B2845;
       --navy-mid: #2D3F5E;
       --gold: #C9A961;
+      --amber: #F59E0B;
       --cream: #F5F1E8;
       --text-secondary: #A0AEC0;
       --text-muted: #6B7280;
@@ -35,7 +36,7 @@
 
     .ui { font-family: system-ui, -apple-system, sans-serif; }
 
-    /* -- Header -- */
+    /* —— Header —— */
     .header { max-width: 800px; margin: 0 auto 24px; text-align: center; }
     .header h1 { font-size: 28px; font-weight: 400; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 4px; }
     .header-line { width: 60px; height: 2px; background: var(--gold); margin: 8px auto; }
@@ -49,7 +50,103 @@
 
     .error-banner { margin-top: 10px; padding: 8px 16px; border-radius: 8px; background: rgba(220,38,38,0.15); border: 1px solid rgba(220,38,38,0.3); color: #FCA5A5; font-size: 13px; }
 
-    /* -- Calendar -- */
+    /* —— Notice Board —— */
+    .notice-board { max-width: 800px; margin: 0 auto 20px; }
+    .notice { padding: 10px 16px; border-radius: 8px; margin-bottom: 8px; font-size: 13px; line-height: 1.5; }
+    .notice-fyi { background: rgba(59,130,246,0.1); border: 1px solid rgba(59,130,246,0.3); color: #93C5FD; }
+    .notice-urgent { background: rgba(220,38,38,0.12); border: 1px solid rgba(220,38,38,0.35); color: #FCA5A5; }
+    .notice-warning { background: rgba(217,119,6,0.12); border: 1px solid rgba(217,119,6,0.35); color: #FBBF24; }
+    .notice-source { font-size: 11px; color: var(--text-muted); margin-top: 4px; }
+
+    /* —— Due Today —— */
+    .due-today { max-width: 800px; margin: 0 auto 24px; border-radius: 12px; overflow: hidden; }
+    .due-today-card {
+      background: rgba(245,158,11,0.06);
+      border: 1px solid rgba(245,158,11,0.3);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+    .due-today-header {
+      padding: 14px 18px 12px;
+      border-bottom: 1px solid rgba(245,158,11,0.15);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .due-today-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--amber);
+      letter-spacing: 0.04em;
+    }
+    .due-today-header .subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+    }
+    .due-today-status {
+      padding: 0 18px;
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+    .due-today-items {
+      padding: 12px 18px 16px;
+    }
+    .today-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 12px;
+      margin-bottom: 6px;
+      border-radius: 8px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.06);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .today-item:hover {
+      background: rgba(255,255,255,0.06);
+    }
+    .today-item.done {
+      opacity: 0.5;
+    }
+    .today-item.done .today-item-text {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+    .today-check {
+      flex-shrink: 0;
+      margin-top: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 5px;
+      border: 2px solid rgba(245,158,11,0.4);
+      background: transparent;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      color: #059669;
+      transition: all 0.2s;
+    }
+    .today-check.checked {
+      border-color: #059669;
+      background: rgba(5,150,105,0.2);
+    }
+    .today-item-text {
+      font-size: 14px;
+      color: var(--cream);
+      line-height: 1.5;
+      font-weight: 500;
+    }
+    .due-today-notes {
+      padding: 0 18px 14px;
+      font-size: 12px;
+      color: var(--text-muted);
+      line-height: 1.5;
+    }
+
+    /* —— Calendar —— */
     .calendar { max-width: 800px; margin: 0 auto 28px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-gold); overflow: hidden; }
     .calendar-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
     .calendar-header h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; }
@@ -83,35 +180,12 @@
     .event-detail { font-size: 12px; color: var(--text-muted); margin-top: 4px; line-height: 1.5; }
     .event-duration { font-size: 10px; color: var(--text-muted); }
 
-    /* -- Filters -- */
-
-    /* -- Notice Board -- */
-    .notice-board { max-width: 800px; margin: 0 auto 28px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-gold); overflow: hidden; }
-    .notice-board-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
-    .notice-board-header h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; }
-    .notice-board-body { padding: 14px 18px 16px; }
-    .notice-item { padding: 10px 14px; border-radius: 8px; margin-bottom: 8px; }
-    .notice-item.priority-urgent { background: rgba(220,38,38,0.1); border: 1px solid rgba(220,38,38,0.3); }
-    .notice-item.priority-normal { background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); }
-    .notice-item.priority-fyi { background: rgba(14,165,233,0.08); border: 1px solid rgba(14,165,233,0.2); }
-    .notice-message { font-size: 13px; color: var(--cream); line-height: 1.5; }
-    .notice-meta { font-size: 11px; color: var(--text-muted); margin-top: 4px; display: flex; align-items: center; justify-content: space-between; }
-    .notice-archive { cursor: pointer; font-size: 16px; color: var(--text-muted); padding: 0 4px; opacity: 0.5; transition: opacity 0.2s; }
-    .notice-archive:hover { opacity: 1; color: #DC2626; }
-    .notice-post-row { display: flex; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
-    .notice-input { flex: 1; padding: 8px 12px; border-radius: 6px; border: 1px solid rgba(201,169,97,0.3); background: rgba(255,255,255,0.06); color: var(--cream); font-size: 13px; font-family: system-ui, sans-serif; outline: none; }
-    .notice-input::placeholder { color: var(--text-muted); }
-    .notice-input:focus { border-color: var(--gold); }
-    .notice-select { padding: 8px 8px; border-radius: 6px; border: 1px solid rgba(201,169,97,0.3); background: rgba(255,255,255,0.06); color: var(--cream); font-size: 12px; font-family: system-ui, sans-serif; outline: none; cursor: pointer; }
-    .notice-select option { background: var(--navy-deep); color: var(--cream); }
-    .notice-send-btn { padding: 8px 16px; border-radius: 6px; border: none; background: var(--gold); color: var(--navy-deep); font-size: 13px; font-weight: 600; cursor: pointer; font-family: system-ui, sans-serif; transition: opacity 0.2s; }
-    .notice-send-btn:hover { opacity: 0.85; }
-
+    /* —— Filters —— */
     .filters { max-width: 800px; margin: 0 auto 20px; display: flex; gap: 8px; flex-wrap: wrap; justify-content: center; }
     .filter-btn { padding: 6px 14px; border-radius: 6px; border: 1px solid rgba(255,255,255,0.15); background: rgba(255,255,255,0.05); color: var(--text-secondary); cursor: pointer; font-size: 12px; transition: all 0.2s; }
     .filter-btn.active { border-color: var(--gold); background: rgba(201,169,97,0.2); color: var(--gold); }
 
-    /* -- Groups & Tasks -- */
+    /* —— Groups & Tasks —— */
     .groups { max-width: 800px; margin: 0 auto; }
     .group { margin-bottom: 24px; }
     .group-header { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; padding: 0 4px; }
@@ -156,7 +230,7 @@
     .notes-box p { font-size: 13px; color: #D1D5DB; line-height: 1.5; }
     .last-touched { font-size: 11px; color: var(--text-muted); margin-top: 10px; }
 
-    /* -- Footer -- */
+    /* —— Footer —— */
     .footer { max-width: 800px; margin: 24px auto 0; text-align: center; padding: 16px 0; border-top: 1px solid var(--border-subtle); }
     .footer p { font-size: 12px; color: var(--text-muted); margin-bottom: 8px; }
     .footer-actions { display: flex; gap: 12px; justify-content: center; align-items: center; flex-wrap: wrap; }
@@ -164,29 +238,30 @@
     .footer-btn { font-size: 11px; background: none; border: 1px solid rgba(201,169,97,0.3); border-radius: 4px; padding: 3px 10px; cursor: pointer; color: var(--gold); }
     .footer-btn.muted { border-color: rgba(255,255,255,0.1); color: var(--text-muted); }
 
-    /* -- Loading -- */
+    /* —— Loading —— */
     .loading { min-height: 100vh; display: flex; align-items: center; justify-content: center; color: var(--gold); font-size: 18px; }
     .spinner { display: inline-block; width: 20px; height: 20px; border: 2px solid rgba(201,169,97,0.3); border-top-color: var(--gold); border-radius: 50%; animation: spin 0.8s linear infinite; margin-right: 10px; }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* -- Responsive -- */
+    /* —— Responsive —— */
     @media (max-width: 600px) {
       body { padding: 12px; }
       .header h1 { font-size: 20px; letter-spacing: 0.04em; }
       .day-tab-label { font-size: 9px; }
       .day-tab-num { font-size: 14px; width: 24px; height: 24px; line-height: 24px; }
       .event-time { min-width: 56px; font-size: 11px; }
+      .today-item-text { font-size: 13px; }
     }
   </style>
 </head>
 <body>
 
 <div id="app">
-  <div class="loading"><div class="spinner"></div> Loading dashboard&hellip;</div>
+  <div class="loading"><div class="spinner"></div> Loading dashboard…</div>
 </div>
 
 <script>
-// --- CONFIG ---------------------------------------------------------
+// ——— CONFIG ———
 const API_BASE = "https://dashboardapi-production.up.railway.app";
 const STORAGE_KEY = "les-dashboard-completed-v3";
 const KEY_STORAGE = "les-dashboard-api-key";
@@ -194,7 +269,7 @@ const KEY_STORAGE = "les-dashboard-api-key";
 function getApiKey() { return localStorage.getItem(KEY_STORAGE); }
 function setApiKey(k) { localStorage.setItem(KEY_STORAGE, k); }
 
-// --- SCHEDULE -------------------------------------------------------
+// ——— SCHEDULE ———
 const SCHEDULE = {
   Sunday: [
     { time: "4:00 AM", event: "Liturgy prep", category: "Ministry", duration: 120 },
@@ -209,10 +284,10 @@ const SCHEDULE = {
   Tuesday: [
     { time: "AM", event: "Review & update social media posting approach", category: "Content", detail: "Instagram and LinkedIn connections need attention" },
     { time: "AM", event: "Prep for AA lead (Wednesday)", category: "Personal" },
-    { time: "12:00 PM", event: "Lunch &mdash; Frank D. or Dennis", category: "Personal", duration: 60, location: "Out" },
+    { time: "12:00 PM", event: "Lunch — Frank D. or Dennis", category: "Personal", duration: 60, location: "Out" },
   ],
   Wednesday: [
-    { time: "11:30 AM", event: "Zoom host &mdash; AA Meeting (YOUR LEAD)", category: "Personal", duration: 90, detail: "You're leading this week &mdash; make sure prep is done" },
+    { time: "11:30 AM", event: "Zoom host — AA Meeting (YOUR LEAD)", category: "Personal", duration: 90, detail: "You're leading this week — make sure prep is done" },
     { time: "3:00 PM", event: "Meet with Frank P.", category: "Personal", duration: 60 },
   ],
   Thursday: [
@@ -220,7 +295,7 @@ const SCHEDULE = {
   ],
   Friday: [
     { time: "10:00 AM", event: "Zoom with Frank D.", category: "Personal", duration: 30 },
-    { time: "10:30 AM", event: "Zoom host &mdash; AA Meeting", category: "Personal", duration: 90 },
+    { time: "10:30 AM", event: "Zoom host — AA Meeting", category: "Personal", duration: 90 },
     { time: "PM", event: "Start on homily", category: "Ministry" },
   ],
   Saturday: [
@@ -233,16 +308,16 @@ const SCHEDULE = {
 const DAY_ORDER = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const CAT_COLORS = { Writing: "#8B5CF6", Tech: "#0EA5E9", Ministry: "#C9A961", Content: "#EC4899", Personal: "#94A3B8" };
 const URGENCY = {
-  urgent:    { label: "&#x1F534; URGENT",    color: "#DC2626", order: 0 },
-  upcoming:  { label: "&#x1F7E1; UPCOMING",  color: "#D97706", order: 1 },
-  recurring: { label: "&#x1F535; RECURRING", color: "#2563EB", order: 2 },
-  active:    { label: "&#x1F7E2; ACTIVE",    color: "#059669", order: 3 },
-  low:       { label: "&#x26AA; LOW",       color: "#6B7280", order: 4 },
+  urgent:    { label: "🔴 URGENT",    color: "#DC2626", order: 0 },
+  upcoming:  { label: "🟡 UPCOMING",  color: "#D97706", order: 1 },
+  recurring: { label: "🔵 RECURRING", color: "#2563EB", order: 2 },
+  active:    { label: "🟢 ACTIVE",    color: "#059669", order: 3 },
+  low:       { label: "⚪ LOW",       color: "#6B7280", order: 4 },
 };
 
-// --- STATE ----------------------------------------------------------
-let groups = [];
-let notices = [];
+// ——— STATE ———
+let allGroups = [];   // raw from API (includes "today" group)
+let notices = [];     // notice board items from API
 let completed = {};
 let expandedId = null;
 let selectedDay = DAY_ORDER[new Date().getDay()];
@@ -250,7 +325,7 @@ let activeFilter = "all";
 let lastFetched = null;
 let error = null;
 
-// --- HELPERS --------------------------------------------------------
+// ——— HELPERS ———
 function daysUntilDeadline(task) {
   if (task.deadline) {
     const now = new Date(); now.setHours(0,0,0,0);
@@ -309,7 +384,7 @@ function promptForKey() {
   return null;
 }
 
-// --- RENDER ---------------------------------------------------------
+// ——— RENDER ———
 function render() {
   const app = document.getElementById("app");
   const now = new Date();
@@ -318,34 +393,91 @@ function render() {
   const weekDates = DAY_ORDER.map((_, i) => { const d = new Date(sunday); d.setDate(sunday.getDate() + i); return d; });
   const todayStr = now.toLocaleDateString("en-US", { weekday: "long", year: "numeric", month: "long", day: "numeric" });
 
-  const allTasks = groups.flatMap(g => g.tasks);
+  // Separate "today" group from project groups
+  const todayGroup = allGroups.find(g => g.id === "today");
+  const projectGroups = allGroups.filter(g => g.id !== "today");
+
+  const allTasks = projectGroups.flatMap(g => g.tasks);
   const urgentCount = allTasks.filter(t => effectiveUrgency(t) === "urgent").length;
   const upcomingCount = allTasks.filter(t => effectiveUrgency(t) === "upcoming").length;
+  const todayDone = todayGroup ? Object.values(completed).reduce((s, p) => s + Object.values(p).filter(Boolean).length, 0) : 0;
   const totalDone = Object.values(completed).reduce((s, p) => s + Object.values(p).filter(Boolean).length, 0);
 
-  // Filter groups
-  let filtered = groups;
+  // Filter project groups (not "today" — that always shows)
+  let filtered = projectGroups;
   if (activeFilter === "urgent") {
-    filtered = groups.map(g => ({ ...g, tasks: g.tasks.filter(t => { const e = effectiveUrgency(t); return e === "urgent" || e === "upcoming"; }) })).filter(g => g.tasks.length > 0);
+    filtered = projectGroups.map(g => ({ ...g, tasks: g.tasks.filter(t => { const e = effectiveUrgency(t); return e === "urgent" || e === "upcoming"; }) })).filter(g => g.tasks.length > 0);
   } else if (activeFilter !== "all") {
-    filtered = groups.filter(g => g.id === activeFilter);
+    filtered = projectGroups.filter(g => g.id === activeFilter);
   }
 
   const selectedEvents = SCHEDULE[selectedDay] || [];
 
+  // Build the Due Today HTML
+  let dueTodayHTML = "";
+  if (todayGroup && todayGroup.tasks && todayGroup.tasks.length > 0) {
+    // Use the most recent task (latest updated_at) as today's list
+    const todayTask = todayGroup.tasks.sort((a, b) => 
+      (b.updated_at || "").localeCompare(a.updated_at || "")
+    )[0];
+    const taskDone = completed[todayTask.id] || {};
+    const actions = todayTask.next_actions || [];
+    const doneCount = Object.values(taskDone).filter(Boolean).length;
+
+    dueTodayHTML = `
+      <div class="due-today">
+        <div class="due-today-card">
+          <div class="due-today-header ui">
+            <h2>📋 Due Today — ${todayTask.name}</h2>
+            <span class="subtitle">${doneCount > 0 ? doneCount + "/" + actions.length + " done" : actions.length + " items"}</span>
+          </div>
+          ${todayTask.status ? `<p class="due-today-status ui">${todayTask.status}</p>` : ""}
+          <div class="due-today-items ui">
+            ${actions.map((action, i) => {
+              const isDone = taskDone[i] === true;
+              return `<div class="today-item${isDone ? " done" : ""}" data-today-action="${todayTask.id}-${i}">
+                <span class="today-check${isDone ? " checked" : ""}">${isDone ? "✔" : ""}</span>
+                <span class="today-item-text">${action}</span>
+              </div>`;
+            }).join("")}
+          </div>
+          ${todayTask.notes ? `<div class="due-today-notes ui">${todayTask.notes}</div>` : ""}
+        </div>
+      </div>`;
+  }
+
+  // Build notice board HTML
+  let noticeHTML = "";
+  if (notices && notices.length > 0) {
+    const activeNotices = notices.filter(n => n.active !== false);
+    if (activeNotices.length > 0) {
+      noticeHTML = `<div class="notice-board ui">
+        ${activeNotices.map(n => {
+          const cls = n.priority === "urgent" ? "notice-urgent" : n.priority === "warning" ? "notice-warning" : "notice-fyi";
+          return `<div class="notice ${cls}">
+            ${n.message}
+            <div class="notice-source">— ${n.author || "System"}</div>
+          </div>`;
+        }).join("")}
+      </div>`;
+    }
+  }
+
   app.innerHTML = `
     <!-- Header -->
     <div class="header">
-      <h1>LES BROWN &mdash; PROJECT DASHBOARD</h1>
+      <h1>LES BROWN — PROJECT DASHBOARD</h1>
       <div class="header-line"></div>
       <p class="header-date ui">${todayStr}</p>
-      ${error ? `<div class="error-banner ui">&#x26A0; ${error}</div>` : ""}
+      ${error ? `<div class="error-banner ui">⚠ ${error}</div>` : ""}
       <div class="badges ui">
         ${urgentCount > 0 ? `<div class="badge badge-urgent">${urgentCount} urgent</div>` : ""}
         ${upcomingCount > 0 ? `<div class="badge badge-upcoming">${upcomingCount} upcoming</div>` : ""}
-        ${totalDone > 0 ? `<div class="badge badge-done">${totalDone} action${totalDone > 1 ? "s" : ""} completed &#x2714;</div>` : ""}
+        ${totalDone > 0 ? `<div class="badge badge-done">${totalDone} action${totalDone > 1 ? "s" : ""} completed ✔</div>` : ""}
       </div>
     </div>
+
+    ${noticeHTML}
 
     <!-- Calendar -->
     <div class="calendar ui">
@@ -370,7 +502,7 @@ function render() {
           <h3>${selectedDay}</h3>
           ${selectedDay === todayName ? '<span class="today-badge">Today</span>' : ""}
         </div>
-        ${selectedEvents.length === 0 ? '<p class="no-events">No scheduled items &mdash; open time for projects</p>' :
+        ${selectedEvents.length === 0 ? '<p class="no-events">No scheduled items — open time for projects</p>' :
           selectedEvents.map(evt => {
             const cc = CAT_COLORS[evt.category] || "#94A3B8";
             return `<div class="event-row">
@@ -379,8 +511,8 @@ function render() {
               <div class="event-body">
                 <div>
                   <span class="event-name">${evt.event}</span>
-                  ${evt.location ? `<span class="event-tag event-tag-location">&#x1F4CD; ${evt.location}</span>` : ""}
-                  ${evt.automated ? '<span class="event-tag event-tag-auto">&#x26A1; Auto</span>' : ""}
+                  ${evt.location ? `<span class="event-tag event-tag-location">📍 ${evt.location}</span>` : ""}
+                  ${evt.automated ? '<span class="event-tag event-tag-auto">⚡ Auto</span>' : ""}
                 </div>
                 ${evt.detail ? `<p class="event-detail">${evt.detail}</p>` : ""}
                 ${evt.duration ? `<span class="event-duration">${evt.duration >= 60 ? (evt.duration/60)+"h" : evt.duration+"m"}</span>` : ""}
@@ -391,43 +523,13 @@ function render() {
       </div>
     </div>
 
-
-    <!-- Notice Board -->
-    <div class="notice-board ui">
-      <div class="notice-board-header">
-        <h2>&#x1F4CC; Notice Board</h2>
-        <span style="font-size:12px;color:var(--text-muted)">${notices.length} active</span>
-      </div>
-      <div class="notice-board-body">
-        ${notices.length > 0 ? notices.map(n => {
-          const priorityClass = "priority-" + (n.priority || "normal");
-          const icon = n.priority === "urgent" ? "&#x1F534;" : n.priority === "fyi" ? "&#x1F535;" : "&#x1F4CC;";
-          const date = n.created_at ? new Date(n.created_at).toLocaleDateString("en-US", { month: "short", day: "numeric" }) : "";
-          return `<div class="notice-item ${priorityClass}">
-            <div class="notice-message">${icon} ${n.message}</div>
-            <div class="notice-meta">
-              Posted by ${n.author || "Les"}${date ? " &middot; " + date : ""}
-              <span class="notice-archive" data-notice-id="${n.id}" title="Archive">&times;</span>
-            </div>
-          </div>`;
-        }).join("") : '<p class="no-events">No notices posted.</p>'}
-        <div class="notice-post-row">
-          <select id="notice-priority" class="notice-select">
-            <option value="normal">&#x1F4CC; Normal</option>
-            <option value="urgent">&#x1F534; Urgent</option>
-            <option value="fyi">&#x1F535; FYI</option>
-          </select>
-          <input id="notice-input" type="text" placeholder="Post a notice..." class="notice-input">
-          <button id="notice-send" class="notice-send-btn">Post</button>
-        </div>
-      </div>
-    </div>
+    ${dueTodayHTML}
 
     <!-- Filters -->
     <div class="filters ui">
       <button class="filter-btn${activeFilter === "all" ? " active" : ""}" data-filter="all">All Projects</button>
-      <button class="filter-btn${activeFilter === "urgent" ? " active" : ""}" data-filter="urgent">&#x1F534; Needs Attention</button>
-      ${groups.map(g => `<button class="filter-btn${activeFilter === g.id ? " active" : ""}" data-filter="${g.id}">${g.icon} ${g.name}</button>`).join("")}
+      <button class="filter-btn${activeFilter === "urgent" ? " active" : ""}" data-filter="urgent">🔴 Needs Attention</button>
+      ${projectGroups.map(g => `<button class="filter-btn${activeFilter === g.id ? " active" : ""}" data-filter="${g.id}">${g.icon} ${g.name}</button>`).join("")}
     </div>
 
     <!-- Groups -->
@@ -461,21 +563,21 @@ function render() {
                   <p class="task-status">${task.status}</p>
                 </div>
                 <span class="urgency-tag ui" style="background:${urg.color}22;color:${urg.color}">${urg.label}</span>
-                <span class="chevron${isOpen ? " open" : ""}">&#x25BE;</span>
+                <span class="chevron${isOpen ? " open" : ""}">▾</span>
               </div>
               ${isOpen ? `<div class="task-body ui">
                 <div class="section-label">Next Actions</div>
                 ${task.next_actions.map((action, i) => {
                   const isDone = taskDone[i] === true;
                   return `<div class="action-item${isDone ? " done" : ""}" data-action="${task.id}-${i}">
-                    <span class="action-check${isDone ? " checked" : ""}">${isDone ? "&#x2714;" : ""}</span>
+                    <span class="action-check${isDone ? " checked" : ""}">${isDone ? "✔" : ""}</span>
                     <span>${action}</span>
                   </div>`;
                 }).join("")}
                 ${task.links && task.links.length > 0 ? `
                   <div class="section-label">Links & Files</div>
                   <div class="links-row">
-                    ${task.links.map(l => `<a class="link-btn" href="${l.url}" target="_blank" rel="noopener">&#x1F517; ${l.label}</a>`).join("")}
+                    ${task.links.map(l => `<a class="link-btn" href="${l.url}" target="_blank" rel="noopener">🔗 ${l.label}</a>`).join("")}
                   </div>` : ""}
                 ${task.notes ? `<div class="notes-box"><div class="section-label" style="margin-top:0">Notes & Reminders</div><p>${task.notes}</p></div>` : ""}
                 <p class="last-touched">Last touched: ${task.last_touched}</p>
@@ -488,16 +590,16 @@ function render() {
 
     <!-- Footer -->
     <div class="footer ui">
-      <p>${allTasks.length} tasks across ${groups.length} groups &middot; Data from Railway API &middot; &#x1F7E1; UPCOMING = deadline within 2 days</p>
+      <p>${allTasks.length} tasks across ${projectGroups.length} groups · Data from Railway API · 🟡 UPCOMING = deadline within 2 days</p>
       <div class="footer-actions">
         ${lastFetched ? `<span>Fetched ${lastFetched.toLocaleTimeString()}</span>` : ""}
-        <button class="footer-btn" id="refresh-btn">&#x21BB; Refresh</button>
+        <button class="footer-btn" id="refresh-btn">↻ Refresh</button>
         ${totalDone > 0 ? '<button class="footer-btn muted" id="reset-btn">Reset completed</button>' : ""}
       </div>
     </div>
   `;
 
-  // -- Bind Events --
+  // —— Bind Events ——
   document.querySelectorAll(".day-tab").forEach(btn => {
     btn.addEventListener("click", () => { selectedDay = btn.dataset.day; render(); });
   });
@@ -525,6 +627,18 @@ function render() {
     });
   });
 
+  // Due Today checkboxes
+  document.querySelectorAll("[data-today-action]").forEach(el => {
+    el.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const [taskId, actionIdx] = el.dataset.todayAction.split("-").map(Number);
+      if (!completed[taskId]) completed[taskId] = {};
+      completed[taskId][actionIdx] = !completed[taskId][actionIdx];
+      saveCompleted();
+      render();
+    });
+  });
+
   const refreshBtn = document.getElementById("refresh-btn");
   if (refreshBtn) refreshBtn.addEventListener("click", loadDashboard);
 
@@ -536,59 +650,22 @@ function render() {
       render();
     }
   });
-
-  // Notice board: post
-  const noticeInput = document.getElementById("notice-input");
-  const noticeSend = document.getElementById("notice-send");
-  const noticePriority = document.getElementById("notice-priority");
-  if (noticeSend) {
-    async function postNotice() {
-      const msg = noticeInput.value.trim();
-      if (!msg) return;
-      noticeSend.disabled = true;
-      noticeSend.textContent = "...";
-      try {
-        await fetch(API_BASE + "/notices", {
-          method: "POST",
-          headers: { "X-API-Key": getApiKey(), "Content-Type": "application/json" },
-          body: JSON.stringify({ message: msg, author: "Les", priority: noticePriority.value })
-        });
-        noticeInput.value = "";
-        await loadDashboard();
-      } catch (e) {
-        console.error("Post notice failed:", e);
-        noticeSend.disabled = false;
-        noticeSend.textContent = "Post";
-      }
-    }
-    noticeSend.addEventListener("click", postNotice);
-    noticeInput.addEventListener("keydown", (e) => { if (e.key === "Enter") postNotice(); });
-  }
-
-  // Notice board: archive (x button)
-  document.querySelectorAll(".notice-archive").forEach(el => {
-    el.addEventListener("click", async (e) => {
-      e.stopPropagation();
-      const id = el.dataset.noticeId;
-      try {
-        await fetch(API_BASE + "/notices/" + id, {
-          method: "PUT",
-          headers: { "X-API-Key": getApiKey(), "Content-Type": "application/json" },
-          body: JSON.stringify({ active: false })
-        });
-        await loadDashboard();
-      } catch (e) { console.error("Archive notice failed:", e); }
-    });
-  });
 }
 
-// --- INIT -----------------------------------------------------------
+// ——— INIT ———
 async function loadDashboard() {
   try {
     const data = await fetchDashboard();
     if (!data) return; // waiting for key input
-    groups = data.groups || data;
-    notices = data.notices || [];
+    // API returns { groups: [...], notices: [...] }
+    if (data.groups) {
+      allGroups = data.groups;
+      notices = data.notices || [];
+    } else if (Array.isArray(data)) {
+      // Fallback: older API format returns array directly
+      allGroups = data;
+      notices = [];
+    }
     lastFetched = new Date();
     error = null;
   } catch (e) {
