@@ -51,9 +51,12 @@
 
     /* â”€â”€ Calendar â”€â”€ */
     .calendar { max-width: 800px; margin: 0 auto 28px; border-radius: 12px; background: rgba(255,255,255,0.04); border: 1px solid var(--border-gold); overflow: hidden; }
-    .calendar-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; }
+    .calendar-header { padding: 14px 18px 10px; border-bottom: 1px solid var(--border-subtle); display: flex; justify-content: space-between; align-items: center; cursor: pointer; }
     .calendar-header h2 { font-size: 14px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--gold); font-weight: 600; }
     .calendar-header span { font-size: 12px; color: var(--text-muted); }
+    .calendar-header .cal-chevron { color: var(--gold); font-size: 16px; transition: transform 0.25s; margin-left: 8px; }
+    .calendar-header .cal-chevron.closed { transform: rotate(-90deg); }
+    .calendar-header.collapsed { border-bottom: none; }
     
     .day-tabs { display: grid; grid-template-columns: repeat(7, 1fr); border-bottom: 1px solid var(--border-subtle); }
     .day-tab { padding: 10px 4px 8px; border: none; border-bottom: 2px solid transparent; background: transparent; cursor: pointer; text-align: center; transition: all 0.2s; }
@@ -235,6 +238,7 @@ let lastFetched = null;
 let error = null;
 let claudeNotesOpen = false;
 let editingNoticeId = null;
+let calendarOpen = true;
 
 // â”€â”€â”€ HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 function daysUntilDeadline(task) {
@@ -344,11 +348,11 @@ function render() {
 
     <!-- Calendar -->
     <div class="calendar ui">
-      <div class="calendar-header">
-        <h2>Weekly Rhythm</h2>
+      <div class="calendar-header${calendarOpen ? '' : ' collapsed'}" id="calendar-toggle">
+        <h2>Weekly Rhythm <span class="cal-chevron${calendarOpen ? '' : ' closed'}">&#x25BE;</span></h2>
         <span>Week of ${weekDates[0].toLocaleDateString("en-US", { month: "short", day: "numeric" })}</span>
       </div>
-      <div class="day-tabs">
+      ${calendarOpen ? `<div class="day-tabs">
         ${DAY_ORDER.map((day, i) => {
           const isToday = day === todayName;
           const isSel = day === selectedDay;
@@ -384,6 +388,7 @@ function render() {
           }).join("")
         }
       </div>
+    </div>` : ''}
     </div>
 
     <!-- Filters -->
@@ -518,6 +523,9 @@ function render() {
   document.querySelectorAll(".day-tab").forEach(btn => {
     btn.addEventListener("click", () => { selectedDay = btn.dataset.day; render(); });
   });
+
+  const calToggle = document.getElementById("calendar-toggle");
+  if (calToggle) calToggle.addEventListener("click", () => { calendarOpen = !calendarOpen; render(); });
 
   document.querySelectorAll(".filter-btn").forEach(btn => {
     btn.addEventListener("click", () => { activeFilter = btn.dataset.filter; render(); });
