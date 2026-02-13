@@ -429,6 +429,62 @@ function render() {
       ${groups.map(g => `<button class="filter-btn${activeFilter === g.id ? " active" : ""}" data-filter="${g.id}">${g.icon} ${g.name}</button>`).join("")}
     </div>
 
+    <!-- Groups -->
+    <div class="groups">
+      ${filtered.filter(g => g.id === "today").map(group => {
+        const sorted = [...group.tasks].sort((a,b) => (URGENCY[effectiveUrgency(a)]?.order ?? 99) - (URGENCY[effectiveUrgency(b)]?.order ?? 99));
+        return `<div class="group">
+          <div class="group-header ui">
+            <span class="icon">${group.icon}</span>
+            <h3 style="color:${group.color}">${group.name}</h3>
+            <span class="count">(${group.tasks.length})</span>
+          </div>
+          ${sorted.map(task => {
+            const eff = effectiveUrgency(task);
+            const urg = URGENCY[eff];
+            const taskDone = completed[task.id] || {};
+            const doneCount = Object.values(taskDone).filter(Boolean).length;
+            const dl = daysUntilDeadline(task);
+            const isOpen = expandedId === task.id || group.id === "today";
+            const borderClass = eff === "urgent" ? " urgent-border" : eff === "upcoming" ? " upcoming-border" : "";
+
+            return `<div class="task-card${isOpen ? " expanded" : ""}${borderClass}">
+              <div class="task-header" data-task-toggle="${task.id}">
+                <div class="task-dot" style="background:${group.color}"></div>
+                <div class="task-info ui">
+                  <div class="task-title-row">
+                    <h4>${task.name}</h4>
+                    ${doneCount > 0 ? `<span class="done-tag">${doneCount}/${task.next_actions.length} done</span>` : ""}
+                    ${dl !== null && dl >= 0 && dl <= 7 ? `<span class="deadline-tag ${dl <= 1 ? "deadline-urgent" : "deadline-warn"}">${dl === 0 ? "Due today" : dl === 1 ? "Due tomorrow" : dl + " days left"}</span>` : ""}
+                  </div>
+                  <p class="task-status">${task.status}</p>
+                </div>
+                <span class="urgency-tag ui" style="background:${urg.color}22;color:${urg.color}">${urg.label}</span>
+                <span class="chevron${isOpen ? " open" : ""}">▾</span>
+              </div>
+              ${isOpen ? `<div class="task-body ui">
+                <div class="section-label">Next Actions</div>
+                ${task.next_actions.map((action, i) => {
+                  const isDone = taskDone[i] === true;
+                  return `<div class="action-item${isDone ? " done" : ""}" data-action="${task.id}-${i}">
+                    <span class="action-check${isDone ? " checked" : ""}">${isDone ? "✔" : ""}</span>
+                    <span>${action}</span>
+                  </div>`;
+                }).join("")}
+                ${task.links && task.links.length > 0 ? `
+                  <div class="section-label">Links & Files</div>
+                  <div class="links-row">
+                    ${task.links.map(l => `<a class="link-btn" href="${l.url}" target="_blank" rel="noopener">🔗 ${l.label}</a>`).join("")}
+                  </div>` : ""}
+                ${task.notes ? `<div class="notes-box"><div class="section-label" style="margin-top:0">Notes & Reminders</div><p>${task.notes}</p></div>` : ""}
+                <p class="last-touched">Last touched: ${task.last_touched}</p>
+              </div>` : ""}
+            </div>`;
+          }).join("")}
+        </div>`;
+      }).join("")}
+    </div>
+
     <!-- Notice Board -->
     ${notices.length > 0 ? `
     <div class="notice-board ui">
@@ -466,9 +522,9 @@ function render() {
       }).join("")}
     </div>` : ""}
 
-    <!-- Groups -->
+    <!-- Remaining Groups -->
     <div class="groups">
-      ${filtered.map(group => {
+      ${filtered.filter(g => g.id !== "today").map(group => {
         const sorted = [...group.tasks].sort((a,b) => (URGENCY[effectiveUrgency(a)]?.order ?? 99) - (URGENCY[effectiveUrgency(b)]?.order ?? 99));
         return `<div class="group">
           <div class="group-header ui">
