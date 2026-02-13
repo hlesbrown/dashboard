@@ -211,44 +211,10 @@ const KEY_STORAGE = "les-dashboard-api-key";
 function getApiKey() { return localStorage.getItem(KEY_STORAGE); }
 function setApiKey(k) { localStorage.setItem(KEY_STORAGE, k); }
 
-// â”€â”€â”€ SCHEDULE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-const SCHEDULE = {
-  Sunday: [
-    { time: "4:00 AM", event: "Liturgy prep", category: "Ministry", duration: 120 },
-    { time: "6:00 AM", event: "Liturgy (Zoom)", category: "Ministry", duration: 60 },
-    { time: "8:00 AM", event: "Post-liturgy work block", category: "Ministry", detail: "Video editing, post homily (website, Medium & gbchapel.com), post liturgy videos, prep Thursday email (Mailchimp), update liturgical calendar, set up green screen for podcast, start podcast video edit" },
-  ],
-  Monday: [
-    { time: "AM", event: "Publish podcast to Substack, YouTube", category: "Content", detail: "Publish as 'Podcast Episode' not 'Post' in Substack" },
-    { time: "AM", event: "Distribute podcast to social media", category: "Content", detail: "Meta Business Suite/Facebook, Instagram, Bluesky, LinkedIn. Apple/Spotify via Substack RSS." },
-    { time: "12:00 PM", event: "AA Meeting", category: "Personal", duration: 60, location: "Out" },
-  ],
-  Tuesday: [
-    { time: "AM", event: "Review & update social media posting approach", category: "Content", detail: "Instagram and LinkedIn connections need attention" },
-    { time: "AM", event: "Prep for AA lead (Wednesday)", category: "Personal" },
-    { time: "12:00 PM", event: "Lunch — Frank D. or Dennis", category: "Personal", duration: 60, location: "Out" },
-  ],
-  Wednesday: [
-    { time: "11:30 AM", event: "Zoom host — AA Meeting (YOUR LEAD)", category: "Personal", duration: 90, detail: "You're leading this week — make sure prep is done" },
-    { time: "3:00 PM", event: "Meet with Frank P.", category: "Personal", duration: 60 },
-  ],
-  Thursday: [
-    { time: "6:30 AM", event: "Liturgy email sent (automated)", category: "Ministry", automated: true },
-  ],
-  Friday: [
-    { time: "10:00 AM", event: "Zoom with Frank D.", category: "Personal", duration: 30 },
-    { time: "10:30 AM", event: "Zoom host — AA Meeting", category: "Personal", duration: 90 },
-    { time: "PM", event: "Start on homily", category: "Ministry" },
-  ],
-  Saturday: [
-    { time: "AM", event: "Finish homily & upload to teleprompter", category: "Ministry" },
-    { time: "AM", event: "Podcast script due", category: "Content", detail: "Episode script must be finished by end of Saturday" },
-    { time: "PM", event: "Set up video equipment for Sunday Zoom", category: "Ministry" },
-  ],
-};
 
 const DAY_ORDER = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const CAT_COLORS = { Writing: "#8B5CF6", Tech: "#0EA5E9", Ministry: "#C9A961", Content: "#EC4899", Personal: "#94A3B8" };
+const SOURCE_COLORS = { les: "#3B82F6", craig: "#F97316", shared: "#8B5CF6" };
 const URGENCY = {
   urgent:    { label: "🔴 URGENT",    color: "#DC2626", order: 0 },
   upcoming:  { label: "🟡 UPCOMING",  color: "#D97706", order: 1 },
@@ -260,6 +226,7 @@ const URGENCY = {
 // â”€â”€â”€ STATE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
 let groups = [];
 let notices = [];
+let calendarEvents = [];
 let completed = {};
 let expandedId = null;
 let selectedDay = DAY_ORDER[new Date().getDay()];
@@ -350,7 +317,16 @@ function render() {
     filtered = groups.filter(g => g.id === activeFilter);
   }
 
-  const selectedEvents = SCHEDULE[selectedDay] || [];
+  // Build calendar lookup by date string
+  const calByDate = {};
+  calendarEvents.forEach(evt => {
+    if (!calByDate[evt.date]) calByDate[evt.date] = [];
+    calByDate[evt.date].push(evt);
+  });
+
+  // Get events for selected day
+  const selectedDateStr = weekDates[DAY_ORDER.indexOf(selectedDay)].toISOString().slice(0, 10);
+  const selectedEvents = calByDate[selectedDateStr] || [];
 
   app.innerHTML = `
     <!-- Header -->
@@ -376,7 +352,7 @@ function render() {
         ${DAY_ORDER.map((day, i) => {
           const isToday = day === todayName;
           const isSel = day === selectedDay;
-          const has = (SCHEDULE[day] || []).length > 0;
+          const has = (calByDate[weekDates[i].toISOString().slice(0, 10)] || []).length > 0;
           return `<button class="day-tab${isSel ? " selected" : ""}${isToday ? " today" : ""}" data-day="${day}">
             <div class="day-tab-label">${day.slice(0,3)}</div>
             <div class="day-tab-num">${weekDates[i].getDate()}</div>
@@ -391,7 +367,7 @@ function render() {
         </div>
         ${selectedEvents.length === 0 ? '<p class="no-events">No scheduled items — open time for projects</p>' :
           selectedEvents.map(evt => {
-            const cc = CAT_COLORS[evt.category] || "#94A3B8";
+            const cc = SOURCE_COLORS[evt.source] || CAT_COLORS[evt.category] || "#94A3B8";
             return `<div class="event-row">
               <div class="event-time">${evt.time}</div>
               <div class="event-bar" style="background:${cc}"></div>
@@ -629,6 +605,7 @@ async function loadDashboard() {
     if (!data) return; // waiting for key input
     groups = data.groups || data;
     notices = data.notices || [];
+    calendarEvents = data.calendar || [];
     lastFetched = new Date();
     error = null;
   } catch (e) {
