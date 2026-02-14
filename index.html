@@ -39,8 +39,9 @@
     .header { max-width: 800px; margin: 0 auto 24px; text-align: center; }
     .header h1 { font-size: 28px; font-weight: 400; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 4px; }
     .header-line { width: 60px; height: 2px; background: var(--gold); margin: 8px auto; }
-    .header-date { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
-    .header-clock { font-size: 13px; color: var(--gold); margin-top: 4px; letter-spacing: 0.05em; font-variant-numeric: tabular-nums; }
+    .header-date { font-size: 14px; color: var(--text-secondary); margin-top: 8px; display: inline; }
+    .header-clock { font-size: 13px; color: var(--gold); letter-spacing: 0.05em; font-variant-numeric: tabular-nums; display: inline; margin-left: 12px; }
+    .header-dateline { margin-top: 8px; }
 
     .badges { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
     .badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 13px; }
@@ -75,7 +76,7 @@
     .day-dot { width: 4px; height: 4px; border-radius: 50%; background: var(--text-muted); margin: 4px auto 0; }
     .day-tab.selected .day-dot { background: var(--gold); }
 
-    .day-events { padding: 14px 18px 16px; min-height: 80px; }
+    .day-events { padding: 14px 18px 16px; min-height: 80px; max-height: 260px; overflow-y: auto; }
     .day-title { display: flex; align-items: center; gap: 8px; margin-bottom: 12px; }
     .day-title h3 { font-size: 15px; color: var(--cream); font-weight: 600; }
     .today-badge { font-size: 10px; padding: 2px 8px; border-radius: 10px; background: rgba(201,169,97,0.2); color: var(--gold); text-transform: uppercase; letter-spacing: 0.05em; }
@@ -223,7 +224,7 @@ function setApiKey(k) { localStorage.setItem(KEY_STORAGE, k); }
 
 const DAY_ORDER = ["Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday"];
 const CAT_COLORS = { Writing: "#8B5CF6", Tech: "#0EA5E9", Ministry: "#C9A961", Content: "#EC4899", Personal: "#94A3B8" };
-const SOURCE_COLORS = { les: "#3B82F6", craig: "#F97316", shared: "#8B5CF6" };
+const SOURCE_COLORS = { les: "#3B82F6", craig: "#F97316", shared: "#22C55E" };
 const URGENCY = {
   urgent:    { label: "🔴 URGENT",    color: "#DC2626", order: 0 },
   upcoming:  { label: "🟡 UPCOMING",  color: "#D97706", order: 1 },
@@ -375,8 +376,10 @@ function render() {
     <div class="header">
       <h1>LES BROWN — PROJECT DASHBOARD</h1>
       <div class="header-line"></div>
-      <p class="header-date ui">${todayStr}</p>
-      <p class="header-clock ui" id="live-clock"></p>
+      <div class="header-dateline">
+        <p class="header-date ui">${todayStr}</p>
+        <span class="header-clock ui" id="live-clock"></span>
+      </div>
       ${error ? `<div class="error-banner ui">⚠ ${error}</div>` : ""}
       <div class="badges ui">
         ${urgentCount > 0 ? `<div class="badge badge-urgent">${urgentCount} urgent</div>` : ""}
