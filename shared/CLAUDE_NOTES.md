@@ -18,7 +18,7 @@ curl -s https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/CLAUDE
 ```bash
 curl -s -H "X-API-Key: hlbdashboard" https://dashboardapi-production.up.railway.app/dashboard
 ```
-This gives you all groups, tasks, and the notice board.
+This gives you all groups, tasks, notices, and calendar events.
 
 ---
 
@@ -47,7 +47,8 @@ Check the notice board for announcements when new files are added or existing on
 | **Claude-Podcast** | Podcast production, social media, content distribution | `podcast` |
 | **Claude-Sycamore** | Sycamore Boy publication pipeline | `sycamore` |
 | **Claude-Website** | hlesbrown.com, author marketing | `author` |
-| **Claude-GBChapel** | GB Chapel liturgy, homilies, Lenten series, CIRCLING | `gbchapel`, `circle` |
+| **Claude-Liturgy** | GB Chapel liturgy, homilies, Lenten series | `gbchapel` |
+| **Claude-JC** | Jonathan's Circle, CIRCLING magazine | `circle` |
 
 Not all Claudes may be active at any given time. New Claudes may be added.
 
@@ -103,8 +104,9 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 ## 8. Les's Schedule & Preferences
 
 - **Daily hours:** 4:30 AM – 10:00 PM (Sundays: 4:00 AM – 10:00 PM)
+- **Timezone:** Pacific (America/Los_Angeles). The dashboard has a live clock showing Les's local time.
 - **Knee trouble** — daily walk is on the calendar but not happening right now
-- **Calendar:** Les posts his weekly calendar to Claude-Dashboard each morning. Calendar items (blue = Les, orange = Craig) are shown in the Weekly Rhythm section of the dashboard, not in Due Today.
+- **Calendar:** Now syncs automatically from iCloud (see Section 10). Blue = Les, orange = Craig, green = shared with Dennis.
 - **Monday noon AA meeting** is generally shared with Craig
 - **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
 
@@ -124,52 +126,45 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 
 ---
 
-*Last updated: February 13, 2026 by Claude-Dashboard*
+## 10. Calendar — iCloud Live Sync
+
+The dashboard calendar now syncs directly from Les's iCloud calendars via CalDAV. No more manual screenshot loading.
+
+### How it works
+- `POST /calendar/sync?days=21` — pulls events from iCloud and loads them into the dashboard
+- `GET /calendar/list` — shows all iCloud calendars and which ones are being synced
+- The dashboard webapp fetches calendar data from the API on every load
+
+### Calendars synced
+
+| iCloud Calendar | Dashboard Source | Color | Contents |
+|----------------|-----------------|-------|----------|
+| Les Shared Calendar | `les` | Blue (#3B82F6) | Les's main calendar — liturgy, walk, meetings, appointments |
+| Craig's Calendar | `craig` | Orange (#F97316) | Craig's items — tennis, gardening, birthdays, watering |
+| Les' Workout Calendar | `shared` | Green (#22C55E) | Shared with Dennis — sponsee meetings, lunch |
+
+### Sync workflow
+Any Claude can trigger a sync at any time:
+```bash
+curl -s -X POST -H "X-API-Key: hlbdashboard" "https://dashboardapi-production.up.railway.app/calendar/sync?days=21"
+```
+This clears and reloads all events for the date range. Safe to run repeatedly.
+
+### Manual event management
+Events can still be added/edited/deleted manually via the calendar API endpoints (`POST /calendar`, `PUT /calendar/<id>`, `DELETE /calendar/<id>`). Manual events will be overwritten on next sync for dates in the sync range.
+
+### Dashboard features
+- **Week navigation:** ◀ ▶ arrows to move between weeks, "Today" button to return
+- **Time sorting:** Events sorted by time, all-day events at top
+- **Past event hiding:** On today's view, events whose time has passed auto-hide based on Les's local Pacific time
+- **Live clock:** Dashboard header shows Les's current Pacific time (ticks every second), visible to all Claudes checking the dashboard
+
+### If calendars stop syncing
+Run `GET /calendar/list` to check if calendar names have changed. The sync matches by name, so renamed calendars will be silently skipped. Update the CALENDAR_MAP in `app.py` if names change.
+
+### Apple credentials
+iCloud access uses an app-specific password stored as Railway environment variables (`APPLE_ID`, `APPLE_APP_PASSWORD`). If authentication fails, Les may need to generate a new app-specific password at https://appleid.apple.com.
 
 ---
 
-## 10. Calendar Loading Protocol
-
-When Les posts a calendar screenshot each morning, Claude-Dashboard loads the events into the API.
-
-### Color Guide (from Les's calendar app)
-- **Blue** = Les's calendar items → `source: "les"`
-- **Orange** = Craig's calendar items → `source: "craig"`
-- **Green** = Shared items (usually with Dennis) → `source: "shared"`
-
-### Daily Workflow
-1. Les posts calendar screenshot
-2. Read each day carefully, noting the color of each item
-3. For dates already in the API, clear them first: `DELETE /calendar?date=YYYY-MM-DD`
-4. Bulk load new events: `POST /calendar` with an array
-5. Verify with `GET /calendar?date=YYYY-MM-DD`
-
-### Field Mapping
-- `date`: "YYYY-MM-DD" format
-- `time`: Exact time if shown (e.g. "10:00 AM"), "AM"/"PM" if vague, empty string for all-day
-- `event`: Event name as shown on calendar
-- `category`: Usually "Personal" or "Ministry" (for liturgy/chapel items)
-- `duration`: Minutes if known, null otherwise
-- `location`: Include if shown on calendar
-- `detail`: Extra info (e.g. "GB Chapel" for daily liturgy)
-- `source`: "les" (blue), "craig" (orange), "shared" (green)
-- `automated`: true only for auto-sent items like Thursday liturgy email
-
-### Common Patterns
-- Daily Liturgy (5:00 AM or 6:00 AM Sunday) — always Les, category Ministry
-- Walk (7:30 AM) — always Les
-- Tennis with Stephan — usually Craig's calendar (orange)
-- Light Watering — always Craig
-- Water plants — always Craig
-- Vincente gardening — always Craig
-- AA Meetings — always Les
-- Birthdays — usually Craig
-- Sponsee meetings (Dennis) — shared (green)
-
-### Important
-- LOOK CAREFULLY at colors. When in doubt, ask Les.
-- Events with no time go to top of that day (all-day events)
-- The webapp sorts by time and hides past events on today's view
-- The `/dashboard` endpoint returns ~2 weeks of calendar data automatically
-
-*Last updated: February 13, 2026*
+*Last updated: February 14, 2026 by Claude-Dashboard*
