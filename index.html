@@ -40,6 +40,7 @@
     .header h1 { font-size: 28px; font-weight: 400; letter-spacing: 0.08em; color: var(--gold); margin-bottom: 4px; }
     .header-line { width: 60px; height: 2px; background: var(--gold); margin: 8px auto; }
     .header-date { font-size: 14px; color: var(--text-secondary); margin-top: 8px; }
+    .header-clock { font-size: 13px; color: var(--gold); margin-top: 4px; letter-spacing: 0.05em; font-variant-numeric: tabular-nums; }
 
     .badges { display: flex; gap: 10px; justify-content: center; margin-top: 12px; flex-wrap: wrap; }
     .badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 13px; }
@@ -375,6 +376,7 @@ function render() {
       <h1>LES BROWN — PROJECT DASHBOARD</h1>
       <div class="header-line"></div>
       <p class="header-date ui">${todayStr}</p>
+      <p class="header-clock ui" id="live-clock"></p>
       ${error ? `<div class="error-banner ui">⚠ ${error}</div>` : ""}
       <div class="badges ui">
         ${urgentCount > 0 ? `<div class="badge badge-urgent">${urgentCount} urgent</div>` : ""}
@@ -735,6 +737,18 @@ async function loadDashboard() {
 
 completed = loadCompleted();
 loadDashboard();
+
+// Live clock — ticks every second
+function updateClock() {
+  const el = document.getElementById("live-clock");
+  if (el) {
+    const now = new Date();
+    const time = now.toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles", hour: "numeric", minute: "2-digit", second: "2-digit" });
+    el.textContent = time + " PST";
+  }
+}
+updateClock();
+setInterval(updateClock, 1000);
 
 // Auto-refresh when switching back to this tab
 document.addEventListener("visibilitychange", () => {
