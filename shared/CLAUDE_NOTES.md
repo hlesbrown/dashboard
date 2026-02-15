@@ -109,6 +109,14 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 - **Calendar:** Now syncs automatically from iCloud (see Section 10). Blue = Les, orange = Craig, green = shared with Dennis.
 - **Monday noon AA meeting** is generally shared with Craig
 - **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
+- **Saturday recurring:** "Print Celebrant Booklet" MUST appear on every Saturday Due Today list — Les forgets this often
+- **Sunday recurring:** Post homily to Medium & process Zoom videos; Update Liturgy booklets. These go on every Sunday Due Today list.
+
+### Due Today Scheduling Protocol
+- **Check the clock.** Compare current Pacific time against today's calendar events. Do NOT put events on the Due Today list that have already passed — Les doesn't need to be told to do something he's already done.
+- **Calendar events are NOT tasks.** The calendar shows scheduled events (liturgy, walk, meetings). Due Today shows *work items* — things Les needs to remember to do. Don't duplicate calendar items into Due Today.
+- Carry-forward items from yesterday only if they weren't completed.
+- Recurring items (Saturday booklet, Sunday liturgy processing) go on automatically regardless.
 
 ---
 
