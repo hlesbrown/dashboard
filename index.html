@@ -362,7 +362,7 @@ function render() {
   });
 
   // Get events for selected day, filter out past events if viewing today
-  const selectedDateStr = weekDates[DAY_ORDER.indexOf(selectedDay)].toISOString().slice(0, 10);
+  const selectedDateStr = (() => { const d = weekDates[DAY_ORDER.indexOf(selectedDay)]; return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`; })();
   let selectedEvents = calByDate[selectedDateStr] || [];
   if (selectedDay === todayName) {
     const nowMinutes = now.getHours() * 60 + now.getMinutes();
@@ -406,7 +406,8 @@ function render() {
         ${DAY_ORDER.map((day, i) => {
           const isToday = day === todayName;
           const isSel = day === selectedDay;
-          const has = (calByDate[weekDates[i].toISOString().slice(0, 10)] || []).length > 0;
+          const tabDateStr = `${weekDates[i].getFullYear()}-${String(weekDates[i].getMonth()+1).padStart(2,'0')}-${String(weekDates[i].getDate()).padStart(2,'0')}`;
+          const has = (calByDate[tabDateStr] || []).length > 0;
           return `<button class="day-tab${isSel ? " selected" : ""}${isToday ? " today" : ""}" data-day="${day}">
             <div class="day-tab-label">${day.slice(0,3)}</div>
             <div class="day-tab-num">${weekDates[i].getDate()}</div>
@@ -466,7 +467,7 @@ function render() {
             const taskDone = completed[task.id] || {};
             const doneCount = Object.values(taskDone).filter(Boolean).length;
             const dl = daysUntilDeadline(task);
-            const isOpen = expandedId === task.id || group.id === "today";
+            const isOpen = expandedId === task.id;
             const borderClass = eff === "urgent" ? " urgent-border" : eff === "upcoming" ? " upcoming-border" : "";
 
             return `<div class="task-card${isOpen ? " expanded" : ""}${borderClass}">
@@ -559,7 +560,7 @@ function render() {
             const taskDone = completed[task.id] || {};
             const doneCount = Object.values(taskDone).filter(Boolean).length;
             const dl = daysUntilDeadline(task);
-            const isOpen = expandedId === task.id || group.id === "today";
+            const isOpen = expandedId === task.id;
             const borderClass = eff === "urgent" ? " urgent-border" : eff === "upcoming" ? " upcoming-border" : "";
 
             return `<div class="task-card${isOpen ? " expanded" : ""}${borderClass}">
@@ -739,6 +740,11 @@ async function loadDashboard() {
     calendarEvents = data.calendar || [];
     lastFetched = new Date();
     error = null;
+    // Auto-expand Due Today task on first load
+    if (expandedId === null) {
+      const todayGroup = groups.find(g => g.id === "today");
+      if (todayGroup && todayGroup.tasks.length > 0) expandedId = todayGroup.tasks[0].id;
+    }
   } catch (e) {
     error = e.message;
     console.error("API fetch failed:", e);
