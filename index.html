@@ -275,11 +275,19 @@ function effectiveUrgency(task) {
 }
 
 function loadCompleted() {
-  try { const s = localStorage.getItem(STORAGE_KEY); return s ? JSON.parse(s) : {}; } catch { return {}; }
+  // Build completed map from API task data
+  const c = {};
+  groups.forEach(g => g.tasks.forEach(t => {
+    if (t.completed_actions && t.completed_actions.length > 0) {
+      c[t.id] = {};
+      t.completed_actions.forEach(i => { c[t.id][i] = true; });
+    }
+  }));
+  return c;
 }
 
 function saveCompleted() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(completed)); } catch {}
+  // No-op — completions saved via API toggle calls
 }
 
 async function fetchDashboard() {
@@ -664,12 +672,15 @@ function render() {
   });
 
   document.querySelectorAll("[data-action]").forEach(el => {
-    el.addEventListener("click", (e) => {
+    el.addEventListener("click", async (e) => {
       e.stopPropagation();
       const [taskId, actionIdx] = el.dataset.action.split("-").map(Number);
+      // Toggle via API
+      try {
+        await fetch(`${API_BASE}/tasks/${taskId}/toggle/${actionIdx}`, { method: "POST" });
+      } catch {}
       if (!completed[taskId]) completed[taskId] = {};
       completed[taskId][actionIdx] = !completed[taskId][actionIdx];
-      saveCompleted();
       render();
     });
   });
@@ -745,6 +756,8 @@ async function loadDashboard() {
       const todayGroup = groups.find(g => g.id === "today");
       if (todayGroup && todayGroup.tasks.length > 0) expandedId = todayGroup.tasks[0].id;
     }
+    // Load completed state from API data
+    completed = loadCompleted();
   } catch (e) {
     error = e.message;
     console.error("API fetch failed:", e);
