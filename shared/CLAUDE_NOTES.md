@@ -98,21 +98,40 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 - **Send full arrays** — when updating `next_actions` or `links`, send the complete array, not just additions
 - **Les has final say** — do not change task priorities or remove items without checking with Les first
 - **The dashboard is live** — Les sees your updates in real time at https://hlesbrown.github.io/dashboard/
+- **Always bump the API version** — every deploy must increment the version number in `app.py` (the `GET /` endpoint). Les checks this to confirm the right code is running.
 
 ---
 
 ## 8. Les's Schedule & Preferences
 
-- **Daily hours:** 4:30 AM – 10:00 PM (Sundays: 4:00 AM – 10:00 PM)
+### ⚠️ FIRST THING EVERY CONVERSATION: Check the Day, Date, and Time
+- **All Claudes** must verify the current day, date, and Pacific time at the start of every conversation. Claude's servers may report UTC or another timezone — ALWAYS convert to Pacific (America/Los_Angeles).
+- **Les's working hours:** Roughly 8:00 AM – 5:30 PM Pacific, with a lunch break at some point. Plan the day accordingly — if it's 4 PM, don't propose a full day's work.
 - **Timezone:** Pacific (America/Los_Angeles). The dashboard has a live clock showing Les's local time.
+
+### Calendar Colors
+- 🔵 **Blue = Les** — his scheduled events. Pay attention to these when planning the day.
+- 🟠 **Orange = Craig** (Les's husband) — for Les's information only. Don't schedule work during Craig's items unless Les says otherwise.
+- 🟢 **Green = Dennis** (shared calendar) — shared items.
+
+- **Daily hours:** 4:30 AM – 10:00 PM (Sundays: 4:00 AM – 10:00 PM)
 - **Knee trouble** — daily walk is on the calendar but not happening right now
-- **Calendar:** Now syncs automatically from iCloud (see Section 10). Blue = Les, orange = Craig, green = shared with Dennis.
 - **Monday noon AA meeting** is generally shared with Craig
 - **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
 - **Saturday recurring:** "Print Celebrant Booklet" MUST appear on every Saturday Due Today list — Les forgets this often
-- **Sunday recurring:** Post homily to Medium & process Zoom videos; Update Liturgy booklets. These go on every Sunday Due Today list.
+- **Daily recurring (until told otherwise):** "Upload Videos to YouTube" — add every day
+- **Sunday recurring (in this order):**
+  1. Export Videos
+  2. Create Mailchimp Email
+  3. Post Homily to Website
+  4. Post Homily to Medium.com
+  5. Upload Videos to YouTube
+  6. Add Video links to Calendar
+  7. Add Video links to Mailchimp
+  8. Update Liturgy booklets
 
 ### Due Today Scheduling Protocol
+- **EVERY MORNING:** When Les says good morning or asks Claude-Dashboard to refresh, the FIRST thing to do is update the Due Today list for the current day. This is Claude-Dashboard's core responsibility — don't wait to be asked.
 - **Check the clock.** Compare current Pacific time against today's calendar events. Do NOT put events on the Due Today list that have already passed — Les doesn't need to be told to do something he's already done.
 - **Calendar events are NOT tasks.** The calendar shows scheduled events (liturgy, walk, meetings). Due Today shows *work items* — things Les needs to remember to do. Don't duplicate calendar items into Due Today.
 - Carry-forward items from yesterday only if they weren't completed.
