@@ -85,6 +85,7 @@
 
     .event-row { display: flex; align-items: flex-start; gap: 10px; padding: 8px 12px; border-radius: 8px; background: rgba(255,255,255,0.03); border: 1px solid var(--border-subtle); margin-bottom: 8px; }
     .event-time { min-width: 72px; font-size: 12px; color: var(--text-secondary); font-weight: 600; padding-top: 1px; flex-shrink: 0; }
+    .event-time-allday { min-width: 72px; font-size: 11px; color: var(--gold); font-style: italic; padding-top: 1px; flex-shrink: 0; }
     .event-bar { width: 3px; min-height: 20px; align-self: stretch; border-radius: 2px; flex-shrink: 0; }
     .event-body { flex: 1; }
     .event-name { font-size: 13px; color: var(--cream); font-weight: 500; }
@@ -432,7 +433,7 @@ function render() {
           selectedEvents.map(evt => {
             const cc = SOURCE_COLORS[evt.source] || CAT_COLORS[evt.category] || "#94A3B8";
             return `<div class="event-row">
-              <div class="event-time">${evt.time}</div>
+              <div class="${evt.time ? 'event-time' : 'event-time-allday'}">${evt.time || 'All Day'}</div>
               <div class="event-bar" style="background:${cc}"></div>
               <div class="event-body">
                 <div>
@@ -768,6 +769,28 @@ async function loadDashboard() {
 completed = loadCompleted();
 loadDashboard();
 
+// Auto-sync iCloud calendar — throttled to once every 4 hours
+let lastCalSync = 0;
+const CAL_SYNC_INTERVAL = 4 * 60 * 60 * 1000; // 4 hours
+async function autoSyncCalendar() {
+  const now = Date.now();
+  if (now - lastCalSync < CAL_SYNC_INTERVAL) return;
+  const key = getApiKey();
+  if (!key) return;
+  try {
+    await fetch(`${API_BASE}/calendar/sync?days=21`, {
+      method: "POST",
+      headers: { "X-API-Key": key }
+    });
+    lastCalSync = now;
+    console.log("Calendar auto-synced at", new Date().toLocaleTimeString("en-US", { timeZone: "America/Los_Angeles" }));
+    await loadDashboard(); // reload with fresh calendar data
+  } catch (e) {
+    console.error("Calendar auto-sync failed:", e);
+  }
+}
+autoSyncCalendar();
+
 // Live clock — ticks every second
 function updateClock() {
   const el = document.getElementById("live-clock");
@@ -782,7 +805,10 @@ setInterval(updateClock, 1000);
 
 // Auto-refresh when switching back to this tab
 document.addEventListener("visibilitychange", () => {
-  if (!document.hidden && getApiKey()) loadDashboard();
+  if (!document.hidden && getApiKey()) {
+    autoSyncCalendar(); // will throttle itself
+    loadDashboard();
+  }
 });
 
 // Register service worker
