@@ -556,12 +556,14 @@ function render() {
     <!-- Remaining Groups -->
     <div class="groups">
       ${filtered.filter(g => g.id !== "today").map(group => {
-        const sorted = [...group.tasks].sort((a,b) => (URGENCY[effectiveUrgency(a)]?.order ?? 99) - (URGENCY[effectiveUrgency(b)]?.order ?? 99));
+        const visibleTasks = group.tasks.filter(t => !t.name.startsWith("✅"));
+        if (visibleTasks.length === 0) return '';
+        const sorted = [...visibleTasks].sort((a,b) => (URGENCY[effectiveUrgency(a)]?.order ?? 99) - (URGENCY[effectiveUrgency(b)]?.order ?? 99));
         return `<div class="group">
           <div class="group-header ui">
             <span class="icon">${group.icon}</span>
             <h3 style="color:${group.color}">${group.name}</h3>
-            <span class="count">(${group.tasks.length})</span>
+            <span class="count">(${visibleTasks.length})</span>
           </div>
           ${sorted.map(task => {
             const eff = effectiveUrgency(task);
