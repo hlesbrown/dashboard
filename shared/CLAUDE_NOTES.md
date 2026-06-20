@@ -2,7 +2,7 @@
 
 This is the shared reference document for all Claudes working on Les Brown's projects. Fetch this at the start of every session.
 
-```
+```bash
 curl -s https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/CLAUDE_NOTES.md
 ```
 
@@ -33,6 +33,7 @@ https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/FILENAME
 **Currently available:**
 - `DASHBOARD_API_INSTRUCTIONS.md` — Full API reference, endpoints, field definitions, Due Today protocol
 - `CLAUDE_NOTES.md` — This file (permanent handbook)
+- `PROTOCOL-INDEX.md` — Index of all protocol documents across projects
 
 Check the notice board for announcements when new files are added or existing ones are updated.
 
@@ -43,84 +44,171 @@ Check the notice board for announcements when new files are added or existing on
 | Claude | Responsibility | Project Group(s) |
 |--------|---------------|-------------------|
 | **Claude-Dashboard** | Dashboard maintenance, daily planning, Due Today list, cross-project coordination | `today`, all groups |
-| **Claude-NovelBank** | NovelBank app development (Flask/PostgreSQL on Railway) | `novelbase` |
+| **Claude-WB** | WorksBench app development (Flask/PostgreSQL on Railway) | `novelbase` |
 | **Claude-Podcast** | Podcast production, social media, content distribution | `podcast` |
-| **Claude-Sycamore** | Sycamore Boy publication pipeline | `sycamore` |
-| **Claude-Website** | hlesbrown.com, author marketing | `author` |
-| **Claude-Liturgy** | GB Chapel liturgy, homilies, Lenten series | `gbchapel` |
+| **Claude-Editor** | Sycamore Boy dev editing and publication pipeline | `sycamore` |
+| **Claude-BookMarketing** | Book marketing, hlesbrown.com, author platform | `author` |
+| **Claude-Liturgy** | GB Chapel liturgy, homilies, newsletter | `gbchapel` |
 | **Claude-JC** | Jonathan's Circle, CIRCLING magazine | `circle` |
+| **Claude-Bondings** | Bondings novel development | `booksix` |
+| **Claude-Docent** | Palm Springs Art Museum docent training app | `docent` |
+| **Claude-Cowork** | Cross-project coordination, file management, operations | `cowork` |
+| **Claude-Interface** | Avatar/interface experiments | `interface` |
 
-Not all Claudes may be active at any given time. New Claudes may be added.
-
----
-
-## 4. Session Protocol
-
-### Starting a session:
-1. Fetch this handbook (if not already in your project knowledge)
-2. Fetch the dashboard: `GET /dashboard` — read the notice board and check your tasks
-3. If relevant, fetch `DASHBOARD_API_INSTRUCTIONS.md` for full API details
-4. Do your work
-
-### Ending a session:
-1. Update your tasks: `PUT /tasks/<id>` with new status, next_actions, last_touched
-2. Post a progress log: `POST /logs` with `group_id`, `source` (your name), `summary`, `details`
-3. If you have updates for other Claudes, post a notice: `POST /notices`
+Not all Claudes may be active at any given time. New Claudes may be added. When in doubt, check the notice board.
 
 ---
 
-## 5. Due Today List
+## 4. Session Protocol — MANDATORY
+
+### Starting a session (required sequence):
+
+1. **Check the time.** Run `TZ=America/Los_Angeles date`. All planning and scheduling must be in Pacific time.
+2. **Fetch this handbook** (if not already in your project knowledge).
+3. **Sync the calendar:** `POST /calendar/sync?days=21`
+4. **Fetch the dashboard:** `GET /dashboard` — read ALL groups, tasks, and notices, not just your own.
+5. **Scan your own tasks for stale content.** Before doing anything else, check every `next_actions` and `status` field under your group. If items are completed, clear them. If status is outdated, update it. Do this BEFORE reporting to Les.
+6. **Check the notice board** for messages from other Claudes.
+7. Do your work.
+
+### Ending a session — NON-NEGOTIABLE
+
+**A session that ends without these steps is an incomplete session.** Every session MUST finish with all of the following:
+
+---
+
+**STEP 1 — Update every task you touched:**
+
+```bash
+curl -X PUT -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+  -d '{
+    "status": "Current accurate description of state",
+    "next_actions": ["Only items not yet done"],
+    "last_touched": "YYYY-MM-DD"
+  }' \
+  https://dashboardapi-production.up.railway.app/tasks/<id>
+```
+
+Rules:
+- Set `last_touched` to today's date — every time, no exceptions
+- `status` must reflect the **current** state, not last session's state
+- `next_actions` must contain **only items not yet done** — remove completed items
+- If a task is fully complete: set `urgency` to `low`, clear `next_actions`, update `status` to `COMPLETE`
+- Never leave ✅-prefixed items sitting in `next_actions` — they've been done; remove them
+
+---
+
+**STEP 2 — Post an EOD log:**
+
+```bash
+curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+  -d '{
+    "group_id": "your_group_id",
+    "source": "Claude-YourName",
+    "summary": "EOD YYYY-MM-DD — one-line description of session",
+    "details": [
+      "STATE: current version or project state",
+      "COMPLETED: what was finished this session",
+      "IN PROGRESS: what is underway but not done",
+      "NEXT SESSION: recommended starting point next time",
+      "BLOCKERS: anything blocking progress, or None"
+    ]
+  }' \
+  https://dashboardapi-production.up.railway.app/logs
+```
+
+The `details` array is required and must follow this structure. A log with no details is not useful to Les or other Claudes.
+
+---
+
+**STEP 3 — Post a notice if other Claudes need to know:**
+
+Ask yourself before closing:
+- Did my work affect shared infrastructure (Railway, Dropbox, API keys)?
+- Did I complete something that unblocks another Claude?
+- Did I discover something relevant to another project?
+- Did I create or modify a shared file in Dropbox?
+
+If yes to any of these, post a notice:
+
+```bash
+curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+  -d '{
+    "message": "Clear description of what other Claudes need to know",
+    "priority": "fyi|normal|important",
+    "author": "Claude-YourName"
+  }' \
+  https://dashboardapi-production.up.railway.app/notices
+```
+
+---
+
+## 5. Dashboard Accountability — Staleness Rules
+
+Claude-Dashboard reviews all task `last_touched` dates during every morning refresh. The following rules apply:
+
+- **7 days without update:** Claude-Dashboard will flag the task in the morning report to Les.
+- **14 days without update:** Claude-Dashboard will flag it prominently and post a notice directed at the owning Claude.
+- **Recurring tasks** (podcast, liturgy): must show a `last_touched` within the current cycle. A podcast task last touched a month ago is stale even if it's recurring.
+
+**What counts as an update:** Any session where you do substantive work must result in a `PUT /tasks/<id>` with today's `last_touched`. Reading the dashboard and doing nothing does not count.
+
+**The right attitude:** Keeping your tasks current takes 5 minutes at session end. Les sees this dashboard live. Stale tasks create confusion and erode trust in the system. It is part of your job.
+
+---
+
+## 6. Due Today List
 
 Claude-Dashboard posts a daily prioritized task list in the `today` group each morning.
 
 **Rules for other Claudes:**
 - You may add items using bracket notation: `"[YourProject] Description"`
 - Always `GET /tasks?group=today` first so you don't overwrite others' additions
-- To mark done, prepend ✅ to the action text — don't remove items
+- To mark done, prepend ✅ to the action text — don't remove items (Les checks them off in the browser)
 - Do NOT create new tasks in the `today` group — only Claude-Dashboard does that
 - The task ID changes daily — always fetch fresh
 
 ---
 
-## 6. Notice Board Etiquette
+## 7. Notice Board Etiquette
 
-- Notices are for **transient announcements** — new files, API changes, task reassignments, session handoffs
+- Notices are for **transient announcements** — new files, API changes, task reassignments, session handoffs, cross-Claude alerts
 - Permanent info belongs in this handbook or in `DASHBOARD_API_INSTRUCTIONS.md`
-- When posting: `POST /notices` with `message`, `priority` (fyi, normal, important), `author` (your Claude name)
-- Old notices will be deactivated periodically by Claude-Dashboard
+- When posting: `POST /notices` with `message`, `priority` (`fyi`, `normal`, `important`), `author` (your Claude name)
+- Old notices (>30 days) will be deactivated by Claude-Dashboard during morning refresh
 
 ---
 
-## 7. Important Conventions
+## 8. Important Conventions
 
-- **Always GET before PUT** — don't overwrite another Claude's recent changes
-- **Set `last_touched`** to today's date on every task update
-- **Send full arrays** — when updating `next_actions` or `links`, send the complete array, not just additions
+- **Always GET before PUT** — never overwrite another Claude's recent changes
+- **Set `last_touched`** to today's date on every task update — no exceptions
+- **Send full arrays** — when updating `next_actions` or `links`, send the complete array
 - **Les has final say** — do not change task priorities or remove items without checking with Les first
 - **The dashboard is live** — Les sees your updates in real time at https://hlesbrown.github.io/dashboard/
-- **Always bump the API version** — every deploy must increment the version number in `app.py` (the `GET /` endpoint). Les checks this to confirm the right code is running.
+- **Always bump the API version** — every deploy must increment the version number in `app.py`
+- **Recurring workflow steps belong in `notes`, not `next_actions`** — `next_actions` is for specific current to-dos, not standing procedures
 
 ---
 
-## 8. Les's Schedule & Preferences
+## 9. Les's Schedule & Preferences
 
 ### ⚠️ FIRST THING EVERY CONVERSATION: Check the Day, Date, and Time
-- **All Claudes** must verify the current day, date, and Pacific time at the start of every conversation. Claude's servers may report UTC or another timezone — ALWAYS convert to Pacific (America/Los_Angeles).
-- **Les's working hours:** Roughly 8:00 AM – 5:30 PM Pacific, with a lunch break at some point. Plan the day accordingly — if it's 4 PM, don't propose a full day's work.
-- **Timezone:** Pacific (America/Los_Angeles). The dashboard has a live clock showing Les's local time.
+All Claudes must verify the current day, date, and Pacific time at the start of every conversation. Claude's servers may report UTC — ALWAYS convert to Pacific (America/Los_Angeles).
+
+- **Working hours:** Roughly 8:00 AM – 5:30 PM Pacific
+- **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
+- **Homily prep:** Never starts before Friday afternoon — do not add to Due Today earlier than that
 
 ### Calendar Colors
-- 🔵 **Blue = Les** — his scheduled events. Pay attention to these when planning the day.
-- 🟠 **Orange = Craig** (Les's husband) — for Les's information only. Don't schedule work during Craig's items unless Les says otherwise.
-- 🟢 **Green = Dennis** (shared calendar) — shared items.
+- 🔵 **Blue = Les** — his events. Act on these when planning the day.
+- 🟠 **Orange = Craig** (Les's husband) — informational only
+- 🟢 **Green = Dennis** (shared calendar) — informational
 
-- **Daily hours:** 4:30 AM – 10:00 PM (Sundays: 4:00 AM – 10:00 PM)
-- **Knee trouble** — daily walk is on the calendar but not happening right now
-- **Monday noon AA meeting** is generally shared with Craig
-- **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
-- **Saturday recurring:** "Print Celebrant Booklet" MUST appear on every Saturday Due Today list — Les forgets this often
-- **Daily recurring (until told otherwise):** "Upload Videos to YouTube" — add every day
-- **Sunday recurring (in this order):**
+### Recurring items (Due Today)
+- **Saturday:** "Print Celebrant Booklet" — always on Saturday's list
+- **Daily:** "Upload Videos to YouTube" — always on the daily list
+- **Sunday post-liturgy workflow (in this order):**
   1. Export Videos
   2. Create Mailchimp Email
   3. Post Homily to Website
@@ -130,68 +218,40 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
   7. Add Video links to Mailchimp
   8. Update Liturgy booklets
 
-### Due Today Scheduling Protocol
-- **EVERY MORNING:** When Les says good morning or asks Claude-Dashboard to refresh, the FIRST thing to do is update the Due Today list for the current day. This is Claude-Dashboard's core responsibility — don't wait to be asked.
-- **Check the clock.** Compare current Pacific time against today's calendar events. Do NOT put events on the Due Today list that have already passed — Les doesn't need to be told to do something he's already done.
-- **Calendar events are NOT tasks.** The calendar shows scheduled events (liturgy, walk, meetings). Due Today shows *work items* — things Les needs to remember to do. Don't duplicate calendar items into Due Today.
-- Carry-forward items from yesterday only if they weren't completed.
-- Recurring items (Saturday booklet, Sunday liturgy processing) go on automatically regardless.
-
 ---
 
-## 9. Project URLs
+## 10. Project URLs
 
 | Resource | URL |
 |----------|-----|
 | Dashboard PWA | https://hlesbrown.github.io/dashboard/ |
 | Dashboard API | https://dashboardapi-production.up.railway.app |
-| NovelBank (production) | https://novelbank.net |
-| NovelBank (test) | https://test.novelbank.net |
+| WorksBench (production) | https://worksbench.app |
+| WorksBench (test) | https://test.worksbench.app |
 | Author website | https://hlesbrown.com |
 | GB Chapel | https://gbchapel.com |
 | Shared files | https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/ |
 
 ---
 
-## 10. Calendar — iCloud Live Sync
+## 11. Calendar — iCloud Live Sync
 
-The dashboard calendar now syncs directly from Les's iCloud calendars via CalDAV. No more manual screenshot loading.
+The dashboard calendar syncs directly from Les's iCloud calendars via CalDAV.
 
-### How it works
-- `POST /calendar/sync?days=21` — pulls events from iCloud and loads them into the dashboard
-- `GET /calendar/list` — shows all iCloud calendars and which ones are being synced
-- The dashboard webapp fetches calendar data from the API on every load
-
-### Calendars synced
-
-| iCloud Calendar | Dashboard Source | Color | Contents |
-|----------------|-----------------|-------|----------|
-| Les Shared Calendar | `les` | Blue (#3B82F6) | Les's main calendar — liturgy, walk, meetings, appointments |
-| Craig's Calendar | `craig` | Orange (#F97316) | Craig's items — tennis, gardening, birthdays, watering |
-| Les' Workout Calendar | `shared` | Green (#22C55E) | Shared with Dennis — sponsee meetings, lunch |
-
-### Sync workflow
-Any Claude can trigger a sync at any time:
 ```bash
-curl -s -X POST -H "X-API-Key: hlbdashboard" "https://dashboardapi-production.up.railway.app/calendar/sync?days=21"
+# Sync calendar (run at session start)
+curl -s -X POST -H "X-API-Key: hlbdashboard" \
+  "https://dashboardapi-production.up.railway.app/calendar/sync?days=21"
 ```
-This clears and reloads all events for the date range. Safe to run repeatedly.
 
-### Manual event management
-Events can still be added/edited/deleted manually via the calendar API endpoints (`POST /calendar`, `PUT /calendar/<id>`, `DELETE /calendar/<id>`). Manual events will be overwritten on next sync for dates in the sync range.
+| iCloud Calendar | Source | Color | Contents |
+|----------------|--------|-------|----------|
+| Les Shared Calendar | `les` | Blue | Les's main calendar |
+| Craig's Calendar | `craig` | Orange | Craig's items |
+| Les' Workout Calendar | `shared` | Green | Shared with Dennis |
 
-### Dashboard features
-- **Week navigation:** ◀ ▶ arrows to move between weeks, "Today" button to return
-- **Time sorting:** Events sorted by time, all-day events at top
-- **Past event hiding:** On today's view, events whose time has passed auto-hide based on Les's local Pacific time
-- **Live clock:** Dashboard header shows Les's current Pacific time (ticks every second), visible to all Claudes checking the dashboard
-
-### If calendars stop syncing
-Run `GET /calendar/list` to check if calendar names have changed. The sync matches by name, so renamed calendars will be silently skipped. Update the CALENDAR_MAP in `app.py` if names change.
-
-### Apple credentials
-iCloud access uses an app-specific password stored as Railway environment variables (`APPLE_ID`, `APPLE_APP_PASSWORD`). If authentication fails, Les may need to generate a new app-specific password at https://appleid.apple.com.
+Safe to run repeatedly. Clears and reloads the date range each time.
 
 ---
 
-*Last updated: February 14, 2026 by Claude-Dashboard*
+*Last updated: June 20, 2026 by Claude-Dashboard*
