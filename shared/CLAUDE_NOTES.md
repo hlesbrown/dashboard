@@ -1,5 +1,11 @@
 # Claude Handbook — Permanent Notes
 
+> ## ⚠️ TIMEZONE — READ THIS FIRST
+> **Claude's servers run UTC. Les is in Palm Springs, California — Pacific Time (America/Los_Angeles).**
+> Pacific is UTC−7 (PDT summer) or UTC−8 (PST winter).
+> **Always run `TZ=America/Los_Angeles date` at session start. State the correct local day, date, and time before doing anything else.**
+> Getting the date wrong disrupts scheduling. A UTC "Tuesday morning" may be "Monday evening" in Palm Springs. Never assume — always verify.
+
 This is the shared reference document for all Claudes working on Les Brown's projects. Fetch this at the start of every session.
 
 ```bash
@@ -63,13 +69,18 @@ Not all Claudes may be active at any given time. New Claudes may be added. When 
 
 ### Starting a session (required sequence):
 
-1. **Check the time.** Run `TZ=America/Los_Angeles date`. All planning and scheduling must be in Pacific time.
-2. **Fetch this handbook** (if not already in your project knowledge).
-3. **Sync the calendar:** `POST /calendar/sync?days=21`
-4. **Fetch the dashboard:** `GET /dashboard` — read ALL groups, tasks, and notices, not just your own.
-5. **Scan your own tasks for stale content.** Before doing anything else, check every `next_actions` and `status` field under your group. If items are completed, clear them. If status is outdated, update it. Do this BEFORE reporting to Les.
-6. **Check the notice board** for messages from other Claudes.
-7. Do your work.
+**STEP 0 — Verify the local date and time FIRST:**
+```bash
+TZ=America/Los_Angeles date
+```
+State the result (e.g. "Tuesday, June 23, 2026 — 9:30 AM PDT") before doing anything else. Do not proceed until you have confirmed Pacific time. UTC is not acceptable — it will produce wrong dates for Les's scheduling.
+
+1. **Fetch this handbook** (if not already in your project knowledge).
+2. **Sync the calendar:** `POST /calendar/sync?days=21`
+3. **Fetch the dashboard:** `GET /dashboard` — read ALL groups, tasks, and notices, not just your own.
+4. **Scan your own tasks for stale content.** Before doing anything else, check every `next_actions` and `status` field under your group. If items are completed, clear them. If status is outdated, update it. Do this BEFORE reporting to Les.
+5. **Check the notice board** for messages from other Claudes.
+6. Do your work.
 
 ### Ending a session — NON-NEGOTIABLE
 
@@ -90,7 +101,7 @@ curl -X PUT -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
 ```
 
 Rules:
-- Set `last_touched` to today's date — every time, no exceptions
+- Set `last_touched` to today's **Pacific** date — every time, no exceptions
 - `status` must reflect the **current** state, not last session's state
 - `next_actions` must contain **only items not yet done** — remove completed items
 - If a task is fully complete: set `urgency` to `low`, clear `next_actions`, update `status` to `COMPLETE`
@@ -182,7 +193,7 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 ## 8. Important Conventions
 
 - **Always GET before PUT** — never overwrite another Claude's recent changes
-- **Set `last_touched`** to today's date on every task update — no exceptions
+- **Set `last_touched`** to today's **Pacific** date on every task update — no exceptions
 - **Send full arrays** — when updating `next_actions` or `links`, send the complete array
 - **Les has final say** — do not change task priorities or remove items without checking with Les first
 - **The dashboard is live** — Les sees your updates in real time at https://hlesbrown.github.io/dashboard/
@@ -192,9 +203,6 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 ---
 
 ## 9. Les's Schedule & Preferences
-
-### ⚠️ FIRST THING EVERY CONVERSATION: Check the Day, Date, and Time
-All Claudes must verify the current day, date, and Pacific time at the start of every conversation. Claude's servers may report UTC — ALWAYS convert to Pacific (America/Los_Angeles).
 
 - **Working hours:** Roughly 8:00 AM – 5:30 PM Pacific
 - **Sunday:** Liturgy prep 4:00 AM, Liturgy on Zoom 6:00 AM, then post-liturgy work block
@@ -207,13 +215,13 @@ All Claudes must verify the current day, date, and Pacific time at the start of 
 
 ### Recurring items (Due Today)
 - **Saturday:** "Print Celebrant Booklet" — always on Saturday's list
-- **Daily:** "Upload Videos to YouTube" — always on the daily list
-- **Sunday post-liturgy workflow (in this order):**
+
+### Sunday post-liturgy workflow (in this order):
   1. Export Videos
   2. Create Mailchimp Email
   3. Post Homily to Website
   4. Post Homily to Medium.com
-  5. Upload Videos to YouTube
+  5. ~~Upload Videos to YouTube~~ — **Videos go to Vimeo, not YouTube. Vimeo upload happens automatically — do NOT add this to the Due Today list.**
   6. Add Video links to Calendar
   7. Add Video links to Mailchimp
   8. Update Liturgy booklets
@@ -254,4 +262,4 @@ Safe to run repeatedly. Clears and reloads the date range each time.
 
 ---
 
-*Last updated: June 20, 2026 by Claude-Dashboard*
+*Last updated: June 23, 2026 by Claude-Dashboard*
