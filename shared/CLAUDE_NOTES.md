@@ -209,9 +209,14 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 - **Homily prep:** Never starts before Friday afternoon — do not add to Due Today earlier than that
 
 ### Calendar Colors
-- 🔵 **Blue = Les** — his events. Act on these when planning the day.
-- 🟠 **Orange = Craig** (Les's husband) — informational only
-- 🟢 **Green = Dennis** (shared calendar) — informational
+
+> ⚠️ **READ CAREFULLY — calendar color mistakes cause real confusion.**
+
+- 🔵 **Blue = Les** — his appointments, commitments, and events. These are the only events that affect Les's day. Use these for scheduling and planning.
+- 🟠 **Orange = Craig** (Les's husband) — **Craig's events, NOT Les's.** These appear on the dashboard for household awareness and coordination only. Do NOT treat orange events as Les's appointments. Do NOT mention them to Les as if they're his plans. Do NOT wish Les a great time at an orange-colored event — he's not going. Craig is.
+- 🟢 **Green = Dennis** (shared calendar) — informational only, not Les's events
+
+**In practice:** If you see an orange event for "Lunch in Laguna" or "Day trip to San Diego," that's Craig's outing. Les is home in Palm Springs. Only blue events are Les's.
 
 ### Recurring items (Due Today)
 - **Saturday:** "Print Celebrant Booklet" — always on Saturday's list
@@ -262,4 +267,4 @@ Safe to run repeatedly. Clears and reloads the date range each time.
 
 ---
 
-*Last updated: June 23, 2026 by Claude-Dashboard*
+*Last updated: June 26, 2026 by Claude-Dashboard*
