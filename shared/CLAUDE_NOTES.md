@@ -60,6 +60,7 @@ Check the notice board for announcements when new files are added or existing on
 | **Claude-Docent** | Palm Springs Art Museum docent training app | `docent` |
 | **Claude-Cowork** | Cross-project coordination, file management, operations | `cowork` |
 | **Claude-Interface** | Avatar/interface experiments | `interface` |
+| **Claude-CSP** | College Support Program of the Coachella Valley — website and infrastructure | `csp` |
 
 Not all Claudes may be active at any given time. New Claudes may be added. When in doubt, check the notice board.
 
@@ -267,4 +268,4 @@ Safe to run repeatedly. Clears and reloads the date range each time.
 
 ---
 
-*Last updated: June 26, 2026 by Claude-Dashboard*
+*Last updated: September 16, 2026 by Claude-Dashboard*
