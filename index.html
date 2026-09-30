@@ -484,7 +484,7 @@ function render() {
           </div>
           ${dueTodayOpen ? sorted.map(task => {
             const eff = effectiveUrgency(task);
-            const urg = URGENCY[eff];
+            const urg = URGENCY[eff] ?? URGENCY["active"];
             const taskDone = completed[task.id] || {};
             const doneCount = Object.values(taskDone).filter(Boolean).length;
             const dl = daysUntilDeadline(task);
@@ -579,7 +579,7 @@ function render() {
           </div>
           ${sorted.map(task => {
             const eff = effectiveUrgency(task);
-            const urg = URGENCY[eff];
+            const urg = URGENCY[eff] ?? URGENCY["active"];
             const taskDone = completed[task.id] || {};
             const doneCount = Object.values(taskDone).filter(Boolean).length;
             const dl = daysUntilDeadline(task);
