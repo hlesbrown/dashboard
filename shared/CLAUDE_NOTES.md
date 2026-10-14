@@ -53,7 +53,7 @@ Check the notice board for announcements when new files are added or existing on
 | **Claude-WB** | WorksBench app development (Flask/PostgreSQL on Railway) | `novelbase` |
 | **Claude-Podcast** | Podcast production, social media, content distribution | `podcast` |
 | **Claude-Editor** | Sycamore Boy dev editing and publication pipeline | `sycamore` |
-| **Claude-BookMarketing** | Book marketing, hlesbrown.com, author platform | `author` |
+| **Claude-Marketing** | Book marketing, hlesbrown.com, author platform | `author` |
 | **Claude-Liturgy** | GB Chapel liturgy, homilies, newsletter | `gbchapel` |
 | **Claude-JC** | Jonathan's Circle, CIRCLING magazine | `circle` |
 | **Claude-Bondings** | Bondings novel development | `booksix` |
