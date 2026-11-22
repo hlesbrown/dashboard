@@ -1,4 +1,4 @@
-const CACHE_NAME = "les-dashboard-v4";
+const CACHE_NAME = "les-dashboard-v5";
 const ASSETS = ["index.html", "manifest.json", "icon-192.png", "icon-512.png"];
 
 self.addEventListener("install", (e) => {
@@ -17,7 +17,7 @@ self.addEventListener("activate", (e) => {
 
 self.addEventListener("fetch", (e) => {
   // Always go network-first for API calls
-  if (e.request.url.includes("dashboardapi")) {
+  if (e.request.url.includes("api.hlesbrown.com") || e.request.url.includes("dashboardapi")) {
     e.respondWith(fetch(e.request));
     return;
   }
