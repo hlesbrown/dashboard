@@ -16,13 +16,14 @@ curl -s https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/CLAUDE
 
 ## 1. Dashboard API — Quick Start
 
-- **Base URL:** `https://dashboardapi-production.up.railway.app`
-- **Auth:** `X-API-Key: hlbdashboard`
+- **Base URL:** `https://api.hlesbrown.com` (moved Nov 22, 2026 — the old `dashboardapi-production.up.railway.app` address is being retired)
+- **Auth:** header `X-API-Key: <key>`. **The key is in your own project instructions, never in this file** — this repo is public. Examples below write it as `$DASHBOARD_API_KEY`. If your project instructions don't have the key, ask Les.
+- **MCP connector:** Claude connectors reach the dashboard at `https://mcp.hlesbrown.com/mcp/<secret>`. The full address is configured once in Les's account settings; it is a password — never write it in shared files, notices, or chat.
 - **Full API docs:** Fetch `DASHBOARD_API_INSTRUCTIONS.md` from the shared folder (same GitHub location as this file)
 
 **First thing every session:**
 ```bash
-curl -s -H "X-API-Key: hlbdashboard" https://dashboardapi-production.up.railway.app/dashboard
+curl -s -H "X-API-Key: $DASHBOARD_API_KEY" https://api.hlesbrown.com/dashboard
 ```
 This gives you all groups, tasks, notices, and calendar events.
 
@@ -92,13 +93,13 @@ State the result (e.g. "Tuesday, June 23, 2026 — 9:30 AM PDT") before doing an
 **STEP 1 — Update every task you touched:**
 
 ```bash
-curl -X PUT -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X PUT -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{
     "status": "Current accurate description of state",
     "next_actions": ["Only items not yet done"],
     "last_touched": "YYYY-MM-DD"
   }' \
-  https://dashboardapi-production.up.railway.app/tasks/<id>
+  https://api.hlesbrown.com/tasks/<id>
 ```
 
 Rules:
@@ -113,7 +114,7 @@ Rules:
 **STEP 2 — Post an EOD log:**
 
 ```bash
-curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X POST -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{
     "group_id": "your_group_id",
     "source": "Claude-YourName",
@@ -126,7 +127,7 @@ curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
       "BLOCKERS: anything blocking progress, or None"
     ]
   }' \
-  https://dashboardapi-production.up.railway.app/logs
+  https://api.hlesbrown.com/logs
 ```
 
 The `details` array is required and must follow this structure. A log with no details is not useful to Les or other Claudes.
@@ -144,13 +145,13 @@ Ask yourself before closing:
 If yes to any of these, post a notice:
 
 ```bash
-curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X POST -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{
     "message": "Clear description of what other Claudes need to know",
     "priority": "fyi|normal|important",
     "author": "Claude-YourName"
   }' \
-  https://dashboardapi-production.up.railway.app/notices
+  https://api.hlesbrown.com/notices
 ```
 
 ---
@@ -239,7 +240,7 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 | Resource | URL |
 |----------|-----|
 | Dashboard PWA | https://hlesbrown.github.io/dashboard/ |
-| Dashboard API | https://dashboardapi-production.up.railway.app |
+| Dashboard API | https://api.hlesbrown.com |
 | WorksBench (production) | https://worksbench.app |
 | WorksBench (test) | https://test.worksbench.app |
 | Author website | https://hlesbrown.com |
@@ -254,8 +255,8 @@ The dashboard calendar syncs directly from Les's iCloud calendars via CalDAV.
 
 ```bash
 # Sync calendar (run at session start)
-curl -s -X POST -H "X-API-Key: hlbdashboard" \
-  "https://dashboardapi-production.up.railway.app/calendar/sync?days=21"
+curl -s -X POST -H "X-API-Key: $DASHBOARD_API_KEY" \
+  "https://api.hlesbrown.com/calendar/sync?days=21"
 ```
 
 | iCloud Calendar | Source | Color | Contents |

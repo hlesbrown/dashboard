@@ -4,8 +4,8 @@ You have access to Les Brown's project dashboard via a REST API hosted on Railwa
 
 ## Connection Details
 
-- **Base URL:** `https://dashboardapi-production.up.railway.app`
-- **Auth Header:** `X-API-Key: hlbdashboard`
+- **Base URL:** `https://api.hlesbrown.com`
+- **Auth Header:** `X-API-Key: <key>` — the key is in your project instructions, never in this public file. Examples write it as `$DASHBOARD_API_KEY`.
 - **Format:** JSON
 
 ## Shared Files
@@ -24,7 +24,7 @@ Check the notice board for announcements when shared files are updated.
 
 **GET /dashboard** — Full dashboard (groups + tasks + notices). Use this first to see everything.
 ```
-curl -H "X-API-Key: hlbdashboard" https://dashboardapi-production.up.railway.app/dashboard
+curl -H "X-API-Key: $DASHBOARD_API_KEY" https://api.hlesbrown.com/dashboard
 ```
 Returns: `{ "groups": [...], "notices": [...] }`
 
@@ -40,18 +40,18 @@ Returns: `{ "groups": [...], "notices": [...] }`
 
 **PUT /tasks/<id>** — Update a task. Send only the fields you want to change.
 ```
-curl -X PUT -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X PUT -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{"status": "New status text", "last_touched": "2026-02-13"}' \
-  https://dashboardapi-production.up.railway.app/tasks/<id>
+  https://api.hlesbrown.com/tasks/<id>
 ```
 
 **POST /tasks** — Create a new task. Required fields: `group_id`, `name`.
 
 **POST /logs** — Add a progress log entry. Required fields: `group_id`, `source`, `summary`. Optional: `details` (array of strings).
 ```
-curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X POST -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{"group_id": "your_group", "source": "Claude-YourName", "summary": "What you did", "details": ["Detail 1", "Detail 2"]}' \
-  https://dashboardapi-production.up.railway.app/logs
+  https://api.hlesbrown.com/logs
 ```
 
 ## Updatable Task Fields
@@ -105,9 +105,9 @@ Claude-Dashboard posts a daily prioritized task list in the `today` group each m
 
 Post a log entry at the end of each session to record what was accomplished:
 ```
-curl -X POST -H "X-API-Key: hlbdashboard" -H "Content-Type: application/json" \
+curl -X POST -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
   -d '{"group_id": "your_group", "source": "Claude-YourName", "summary": "Brief summary", "details": ["Specific item 1", "Specific item 2"]}' \
-  https://dashboardapi-production.up.railway.app/logs
+  https://api.hlesbrown.com/logs
 ```
 
 ## Current Task IDs (for reference)
