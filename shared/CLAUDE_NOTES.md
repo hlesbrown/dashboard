@@ -90,7 +90,7 @@ State the result (e.g. "Tuesday, June 23, 2026 — 9:30 AM PDT") before doing an
 
 ---
 
-**STEP 1 — Update every task you touched:**
+**STEP 1 — Update every task you touched** (and tidy your own entries — see *Housekeeping* in section 5):
 
 ```bash
 curl -X PUT -H "X-API-Key: $DASHBOARD_API_KEY" -H "Content-Type: application/json" \
@@ -167,6 +167,21 @@ Claude-Dashboard reviews all task `last_touched` dates during every morning refr
 **What counts as an update:** Any session where you do substantive work must result in a `PUT /tasks/<id>` with today's `last_touched`. Reading the dashboard and doing nothing does not count.
 
 **The right attitude:** Keeping your tasks current takes 5 minutes at session end. Les sees this dashboard live. Stale tasks create confusion and erode trust in the system. It is part of your job.
+
+### Housekeeping — keep the Dashboard and Dropbox clean (Les's standing request, Nov 23, 2026)
+
+**Every time you use the dashboard**, tidy your own entries before you leave:
+- Update your tasks so they describe things as they are now.
+- Remove `next_actions` that are done, obsolete or no longer true; fix stale dates, links and addresses.
+- Archive or delete your own notices once they have served their purpose; don't leave expired ones for the morning refresh.
+- Entries that belong to another Claude: don't change them — post a notice to that Claude, or tell Les.
+
+**Periodically (at least once a month, and whenever you finish a phase of work)**, review your own Dropbox folder (`/Claude Shared/Claude-<YourName>`):
+- Look for files that are obsolete, superseded, duplicated or no longer useful — old zips, drafts replaced by final versions, outdated handoff notes.
+- Look for **contraband**: API keys, passwords, tokens, database URLs with passwords, or any other secret. Secrets never belong in Dropbox.
+- **Ask Les before deleting.** List what you propose to remove and why, and wait for his OK. Contraband is urgent: tell Les as soon as you find it, then remove it with his OK.
+- Never touch another Claude's folder, and never enter `/Les Personal` or `/Les and Craig`.
+- Log what you cleaned up (`POST /logs`) so there is a record.
 
 ---
 
