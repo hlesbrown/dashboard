@@ -14,6 +14,9 @@ curl -s https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/CLAUDE
 
 ---
 
+> **Building, changing or deploying a webapp?** Read the Lesland Webapp Standard first:
+> `curl -s https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/WEBAPP_STANDARD.md`
+
 ## 1. Dashboard API — Quick Start
 
 - **Base URL:** `https://api.hlesbrown.com` (moved Nov 22, 2026 — the old `dashboardapi-production.up.railway.app` address is being retired)

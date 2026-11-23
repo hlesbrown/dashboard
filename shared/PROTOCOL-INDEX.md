@@ -18,6 +18,7 @@ separate protocol set (seven files in its own `protocols/` folder).
 |---|---|
 | `CLAUDE_NOTES.md` | `https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/CLAUDE_NOTES.md` |
 | `DASHBOARD_API_INSTRUCTIONS.md` | `https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/DASHBOARD_API_INSTRUCTIONS.md` |
+| `WEBAPP_STANDARD.md` | `https://raw.githubusercontent.com/hlesbrown/dashboard/main/shared/WEBAPP_STANDARD.md` — read before touching any webapp |
 
 Both are public, need no credentials, and are fetched at session start.
 **CLAUDE_NOTES.md is authoritative.** Where a project file disagrees with it, the handbook wins.
