@@ -27,7 +27,7 @@ Both are public, need no credentials, and are fetched at session start.
 
 ## Per-project anchors
 
-All paths are Dropbox unless stated. Reach Dropbox through the Dropbox connector (your Dropbox tools); there is no shared Dropbox token any more (retired Nov 23, 2026).
+All paths are Dropbox unless stated. Reach Dropbox through the Dropbox connector, or with the Dropbox API credentials in your project instructions when you must write .docx/binary files or overwrite in place.
 
 | Claude | Group | Anchor file | Covers | Last updated |
 |---|---|---|---|---|

@@ -61,7 +61,7 @@ Use it when real users try a release before everyone gets it (WorksBench does).
 
 - **App secrets** (database URLs, API keys, OAuth secrets) live only in **Railway variables**, per environment.
 - **Claude credentials** live only in the **project instructions of the Claude that uses them**.
-- **Prefer connectors to credentials.** Dropbox is reached only through the Dropbox connector; the shared Dropbox token was retired Nov 23, 2026.
+- **Prefer connectors to credentials** where the connector can do the job. (The Dropbox connector can't write .docx or other binary files or overwrite in place, so the Dropbox API credentials stay in project instructions for that.)
 - **Never** put a secret in:
   - a repo (public or private);
   - the dashboard (tasks, notices, logs);

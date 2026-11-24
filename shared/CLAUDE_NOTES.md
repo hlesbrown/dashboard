@@ -184,7 +184,7 @@ Claude-Dashboard reviews all task `last_touched` dates during every morning refr
 - Look for **contraband**: API keys, passwords, tokens, database URLs with passwords, or any other secret. Secrets never belong in Dropbox.
 - **Ask Les before deleting.** List what you propose to remove and why, and wait for his OK. Contraband is urgent: tell Les as soon as you find it, then remove it with his OK.
 - Never touch another Claude's folder, and never enter `/Les Personal` or `/Les and Craig`.
-- **Dropbox is reached only through the Dropbox connector.** The old shared Dropbox app key, secret and refresh token were retired on Nov 23, 2026. If your project instructions (or any file you can see) still contain them, tell Les right away — don't use them, and don't repeat them.
+- **Dropbox access:** use the Dropbox connector for reading, listing and text files. For .docx, PDFs, images or other binary files, and for overwriting a file in place, use the Dropbox API credentials in your project instructions (the connector can't do those). Never copy those credentials anywhere else — not into files, the dashboard, Dropbox, GitHub or replies.
 - Log what you cleaned up (`POST /logs`) so there is a record.
 
 ---
